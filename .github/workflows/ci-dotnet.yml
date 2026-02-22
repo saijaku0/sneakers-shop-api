@@ -1,0 +1,25 @@
+name: Push settings
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-verstion: "10.0.x"
+
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build dotnet
+        run: dotnet build --no-restore --configuration Release
+      - name: Run Unit Tests
+        run: dotnet test --no-build --configuration Release --logger trx --results-directory "TestResults"
+
