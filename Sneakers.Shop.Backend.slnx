@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Sneakers.Shop.Backend.Api/Sneakers.Shop.Backend.Api.csproj" />
+    <Project Path="src/Sneakers.Shop.Backend.Application/Sneakers.Shop.Backend.Application.csproj" />
+    <Project Path="src/Sneakers.Shop.Backend.Domain/Sneakers.Shop.Backend.Domain.csproj" />
+    <Project Path="src/Sneakers.Shop.Backend.Infrastructure/Sneakers.Shop.Backend.Infrastructure.csproj" />
+  </Folder>
+</Solution>
