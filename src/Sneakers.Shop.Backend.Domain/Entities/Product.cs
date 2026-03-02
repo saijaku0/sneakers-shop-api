@@ -35,9 +35,9 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             decimal basePrice)
         {
             IsActive = true;
-            BrandId = brandId;
-            AudienceId = audienceId;
 
+            UpdateBrand(brandId);
+            UpdateAudience(audienceId);
             UpdateProductModel(model);
             UpdateProductDescAndName(description, productName);
             UpdateProductPrice(basePrice);
@@ -86,6 +86,22 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException("Photos cannot be empty");
 
             ImagesUrls = photosUrls;
+        }
+
+        public void UpdateBrand (Guid newBrandId)
+        {
+            if (!IsActive) throw new DomainException("You cannot modify deactivated product");
+            if (newBrandId == Guid.Empty) throw new DomainException("Brand ID cannot be empty");
+
+            BrandId = newBrandId;
+        }
+
+        public void UpdateAudience(Guid newAudienceId)
+        {
+            if (!IsActive) throw new DomainException("You cannot modify deactivated product");
+            if (newAudienceId == Guid.Empty) throw new DomainException("Audience ID cannot be empty");
+
+            AudienceId = newAudienceId;
         }
 
         public void UpdateProductStatus(bool status)
