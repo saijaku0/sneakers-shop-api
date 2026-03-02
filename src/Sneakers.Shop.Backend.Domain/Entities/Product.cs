@@ -1,9 +1,11 @@
 ﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+using System.Reflection;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
     public class Product
     {
+        // TO DO: add enums for Target Audience Male or Female, Unisex (etc.): add enums;
         public Guid Id { get; private set; }
         public Guid BrandId { get; private set; }
         public Brand? SneakersBrand { get; private set; }
@@ -13,6 +15,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         
         public string ProductName { get; private set; } = string.Empty;
         public string Model { get; private set; } = string.Empty;
+
         public string Description { get; private set; } = string.Empty;
         public decimal BasePrice { get; private set; }
 
@@ -29,19 +32,65 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             string description,
             decimal basePrice)
         {
-            if (basePrice < 0)
-                throw new DomainException("Base price cannot be less then 0");
-
-            ProductName = productName;
+            IsActive = true;
             BrandId = brandId;
-            Model = model;
-            Description = description;
-            BasePrice = basePrice;
+
+            UpdateProductModel(model);
+            UpdateProductDescAndName(description, productName);
+            UpdateProductPrice(basePrice);
 
             Id = Guid.NewGuid();
             CreateAt = DateTimeOffset.UtcNow;
         }
 
-        //TO DO: Add Behaviors
+        public void UpdateProductDescAndName(
+            string description, 
+            string productName)
+        {
+            if (!IsActive)
+                throw new DomainException("You cannot modify deactivated product");
+            if (string.IsNullOrWhiteSpace(productName))
+                throw new DomainException("Product name cannot be empty");
+            if (string.IsNullOrWhiteSpace(description))
+                throw new DomainException("Description cannot be empty");
+
+            ProductName = productName;
+            Description = description;
+        }
+
+        public void UpdateProductPrice(decimal price)
+        {
+            if (!IsActive) 
+                throw new DomainException("You cannot modify deactivated product");
+            if (price < 0) throw new DomainException("Price cannot be less than 0");
+
+            BasePrice = price;
+        }
+
+        public void UpdateProductModel(string newModel)
+        {
+            if (!IsActive) throw new DomainException("You cannot modify deactivated product");
+            if (string.IsNullOrWhiteSpace(newModel))
+                throw new DomainException("Model cannot be empty");
+
+            Model = newModel;
+        }
+
+        public void UpdateProductPhoto(List<string> photosUrls)
+        {
+            if (!IsActive) throw new DomainException("You cannot modify deactivated product");
+            if (photosUrls is null)
+                throw new DomainException("Photos cannot be empty");
+
+            ImagesUrls = photosUrls;
+        }
+
+        public void UpdateProductStatus(bool status)
+        {
+            if (status == IsActive)
+                throw new DomainException($"Cannot update status product already have this status: {IsActive}");
+
+            IsActive = status;
+        }
     }
 }
