@@ -1,18 +1,19 @@
 ﻿using Sneakers.Shop.Backend.Domain.Exceptions;
-using System.Reflection;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
     public class Product
     {
-        // TO DO: add enums for Target Audience Male or Female, Unisex (etc.): add enums;
         public Guid Id { get; private set; }
         public Guid BrandId { get; private set; }
         public Brand? SneakersBrand { get; private set; }
+        public Guid AudienceId { get; private set; }
+        public TargetAudience? TargetAudience { get; private set; }
 
         public IReadOnlyCollection<WarehouseItem> WarehouseItems => _warehouseItems.AsReadOnly();
         private readonly List<WarehouseItem> _warehouseItems = [];
-        
+
+
         public string ProductName { get; private set; } = string.Empty;
         public string Model { get; private set; } = string.Empty;
 
@@ -27,6 +28,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public Product(
             Guid brandId,
+            Guid audienceId,
             string productName,
             string model,
             string description,
@@ -34,6 +36,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         {
             IsActive = true;
             BrandId = brandId;
+            AudienceId = audienceId;
 
             UpdateProductModel(model);
             UpdateProductDescAndName(description, productName);
