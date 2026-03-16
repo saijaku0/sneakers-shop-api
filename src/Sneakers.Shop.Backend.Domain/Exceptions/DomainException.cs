@@ -1,18 +1,32 @@
-﻿namespace Sneakers.Shop.Backend.Domain.Exceptions
+﻿using System.Runtime.Serialization;
+
+namespace Sneakers.Shop.Backend.Domain.Exceptions
 {
     [Serializable]
-    internal class DomainException : Exception
+    public class DomainException : Exception
     {
-        public DomainException()
+        public string? ParamName { get; }
+        public string? ErrorCode { get; }
+
+        public DomainException() { }
+
+        public DomainException(string? message) : base(message) { }
+
+        public DomainException(string? message, Exception? innerException) 
+            : base(message, innerException) 
+        { }
+
+        public DomainException(string? message, string? paramName)
+            : base(message)
         {
+            ParamName = paramName;
         }
 
-        public DomainException(string? message) : base(message)
+        public DomainException(string? message, string? paramName, string? errorCode)
+            : base(message)
         {
-        }
-
-        public DomainException(string? message, Exception? innerException) : base(message, innerException)
-        {
+            ParamName = paramName;
+            ErrorCode = errorCode;
         }
     }
 }
