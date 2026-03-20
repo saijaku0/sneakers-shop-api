@@ -13,6 +13,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public IReadOnlyCollection<WarehouseItem> WarehouseItems => _warehouseItems.AsReadOnly();
         private readonly List<WarehouseItem> _warehouseItems = [];
 
+        public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
+        private readonly List<Comment> _comments = [];
 
         public string ProductName { get; private set; } = string.Empty;
         public string Model { get; private set; } = string.Empty;
