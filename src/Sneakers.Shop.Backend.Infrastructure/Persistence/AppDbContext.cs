@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sneakers.Shop.Backend.Domain.Entities;
-using Sneakers.Shop.Backend.Infrastructure.Entities;
+using Sneakers.Shop.Backend.Infrastructure.Identity;
 
 namespace Sneakers.Shop.Backend.Infrastructure.Persistence
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options)
-        : IdentityDbContext<ApplicationUser>(options)
+        : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Brand> Brands { get; set; }
