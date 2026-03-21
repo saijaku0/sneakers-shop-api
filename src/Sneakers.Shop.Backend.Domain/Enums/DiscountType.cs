@@ -1,6 +1,6 @@
 ﻿namespace Sneakers.Shop.Backend.Domain.Enums
 {
-    public enum DiscontType
+    public enum DiscountType
     {
         Percentage,
         FixedAmount
