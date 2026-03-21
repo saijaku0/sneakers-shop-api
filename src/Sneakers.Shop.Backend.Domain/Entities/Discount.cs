@@ -25,7 +25,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         {
             if (start > end)
                 throw new DomainException("Cannot create discont which end before start.");
-            if (discount == DiscontType.FixedAmount || value < 0)
+            if (discount == DiscontType.FixedAmount && value < 0)
                 throw new DomainException($"Discont: {value}, cannot be less than zero.");
             if (discount == DiscontType.Percentage && (value > 100 || value < 0))
                 throw new DomainException("Percentage discount must be between 0 and 100.", nameof(value));
