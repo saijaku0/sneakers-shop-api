@@ -8,6 +8,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public string Email { get; private set; } = string.Empty;
         public bool IsFlagged { get; private set; }
         public int WarningCount { get; private set; }
+        public IReadOnlyCollection<WishlistItem> WishlistItems => _wishlistItems.AsReadOnly();
+        private readonly List<WishlistItem> _wishlistItems = [];
         public DateTimeOffset RegistrationDate { get; private set; }
 
         private UserProfile() { }
