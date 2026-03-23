@@ -1,5 +1,6 @@
 ﻿using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
+using Sneakers.Shop.Backend.Domain.ValueObjects;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
@@ -9,7 +10,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public Guid UserId { get; private set; }
         public DateTimeOffset OrderDate { get; private set; }
         public OrderStatus Status { get; private set; }
-        public string ShippingAddress { get; private set; } = string.Empty;
+        public Address ShippingAddress { get; private set; } = null!;
 
         public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
         private readonly List<OrderItem> _items = [];
@@ -21,13 +22,11 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         private Order() { } 
 
         public Order(
-            Guid userId, 
-            string shippingAddress)
+            Guid userId,
+            Address shippingAddress)
         {
             if (userId == Guid.Empty)
                 throw new DomainException("UserId cannot be empty.", nameof(userId));
-            if (string.IsNullOrWhiteSpace(shippingAddress))
-                throw new DomainException("Shipping address cannot be empty.", nameof(shippingAddress));
 
             Id = Guid.NewGuid();
             UserId = userId;

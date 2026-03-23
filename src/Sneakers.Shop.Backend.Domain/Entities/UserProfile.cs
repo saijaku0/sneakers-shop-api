@@ -1,4 +1,5 @@
 ﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+using Sneakers.Shop.Backend.Domain.ValueObjects;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
@@ -11,6 +12,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public IReadOnlyCollection<WishlistItem> WishlistItems => _wishlistItems.AsReadOnly();
         private readonly List<WishlistItem> _wishlistItems = [];
         public bool IsDeleted { get; private set; }
+        public Address? DefaultShippingAddress { get; private set; }
         public DateTimeOffset RegistrationDate { get; private set; }
         public DateTimeOffset? DeletedAt { get; private set; }
 
@@ -18,6 +20,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public UserProfile(
             Guid userId,
+            Address address,
             string email)
         {
             if (userId == Guid.Empty)
@@ -29,6 +32,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Email = email;
             WarningCount = 0;
             IsFlagged = false;
+            DefaultShippingAddress = address;
             RegistrationDate = DateTimeOffset.UtcNow;
             IsDeleted = false;
             DeletedAt = null;
@@ -50,6 +54,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
             if (WarningCount >= 3)
                 IsFlagged = true;
+        }
+
+        public void UpdateDefaultAddress(Address newAddress)
+        {
+            CheckIfUserDeleted("User is deleted.");
+
+            DefaultShippingAddress = newAddress;
         }
 
         public void ResetWarnings()
