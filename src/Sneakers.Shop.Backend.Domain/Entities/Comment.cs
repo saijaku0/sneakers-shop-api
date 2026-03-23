@@ -1,10 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class Comment
+    public class Comment : Entity
     {
-        public Guid Id { get; private set; }
         public Guid ProductId { get; private set; }
         public Guid UserId { get; private set; }
         public string? Description { get; private set; }
@@ -17,7 +17,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Guid productId,
             Guid userId,
             string? description,
-            int review)
+            int review) : base(Guid.NewGuid())
         {
             if (review <= 0 || review > 5)
                 throw new DomainException("Review cannot be zero or less and greater than 5");
@@ -26,7 +26,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (userId == Guid.Empty)
                 throw new DomainException("User ID cannot be empty");
 
-            Id = Guid.NewGuid();
             ProductId = productId;
             UserId = userId;
             Description = DescriptionValidation(description);

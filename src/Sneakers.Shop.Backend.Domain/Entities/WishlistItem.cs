@@ -1,10 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class WishlistItem : IEquatable<WishlistItem>
+    public class WishlistItem : Entity
     {
-        public Guid Id { get; private set; }
         public Guid ProductId { get; private set; }
         public Guid UserId { get; private set; }
         public Product? Product { get; private set; }
@@ -16,14 +16,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public WishlistItem(
             Guid userId,
-            Guid productId)
+            Guid productId) : base(Guid.NewGuid())
         {
             if (userId == Guid.Empty)
                 throw new DomainException("User ID cannot be empty");
             if (productId == Guid.Empty)
                 throw new DomainException("Product ID cannot be empty");
 
-            Id = Guid.NewGuid();
             UserId = userId;
             ProductId = productId;
             AddedAt = DateTimeOffset.UtcNow;
@@ -47,21 +46,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
             IsDeleted = false;
             DeletedAt = null;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is WishlistItem other && Id.Equals(other.Id);
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
-
-        public bool Equals(WishlistItem? other)
-        {
-            return other != null && Id.Equals(other.Id);
         }
     }
 }

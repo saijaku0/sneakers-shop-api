@@ -1,11 +1,11 @@
-﻿using Sneakers.Shop.Backend.Domain.Enums;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class OrderStatusHistory : IEquatable<OrderStatusHistory>
+    public class OrderStatusHistory : Entity
     {
-        public Guid Id { get; private set; }
         public Guid OrderId { get; private set; }
         public OrderStatus? OldStatus { get; private set; } 
         public OrderStatus NewStatus { get; private set; }
@@ -18,7 +18,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Guid orderId,
             OrderStatus newStatus,
             OrderStatus? oldStatus = null,
-            string? comment = null)
+            string? comment = null) : base(Guid.NewGuid())
         {
             if (orderId == Guid.Empty)
                 throw new DomainException("OrderId cannot be empty.", nameof(orderId));
@@ -31,17 +31,12 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (comment != null && comment.Length > 500)
                 throw new DomainException("Comment cannot exceed 500 characters.", nameof(comment));
 
-            Id = Guid.NewGuid();
             OrderId = orderId;
             NewStatus = newStatus;
             OldStatus = oldStatus;
             ChangedAt = DateTimeOffset.UtcNow;
             Comment = comment;
         }
-        
-        public override bool Equals(object? obj) => obj is OrderStatusHistory other && Id.Equals(other.Id);
-        public override int GetHashCode() => Id.GetHashCode();
-        public bool Equals(OrderStatusHistory? other) => other != null && Id.Equals(other.Id);
     }
 }
 

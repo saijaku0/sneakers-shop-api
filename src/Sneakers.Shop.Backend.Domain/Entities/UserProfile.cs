@@ -1,12 +1,12 @@
-﻿using Sneakers.Shop.Backend.Domain.Enums;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.ValueObjects;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class UserProfile : IEquatable<UserProfile>
+    public class UserProfile : Entity
     {
-        public Guid Id { get; private set; }
         public string Email { get; private set; } = string.Empty;
         public bool IsFlagged { get; private set; }
         public int WarningCount { get; private set; }
@@ -23,7 +23,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public UserProfile(
             Guid userId,
-            string email)
+            string email) : base(Guid.NewGuid())
         {
             if (userId == Guid.Empty)
                 throw new DomainException("User ID cannot be empty");
@@ -100,9 +100,5 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 _moderationLogs.Add(new ModerationLog(Id, ModerationAction.Flagged, "Automatically flagged after 3 warnings."));
             }
         }
-
-        public bool Equals(UserProfile? other) => other != null && Id.Equals(other.Id);
-        public override bool Equals(object? obj) => Equals(obj as UserProfile);
-        public override int GetHashCode() => Id.GetHashCode();
     }
 }

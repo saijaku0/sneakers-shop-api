@@ -1,11 +1,11 @@
-﻿using Sneakers.Shop.Backend.Domain.Enums;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class ModerationLog
+    public class ModerationLog : Entity
     {
-        public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
         public ModerationAction Action { get; private set; }
         public string Reason { get; private set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public ModerationLog(
             Guid userId, 
             ModerationAction action, 
-            string reason)
+            string reason) : base(Guid.NewGuid())
         {
             if (userId == Guid.Empty)
                 throw new DomainException("UserId cannot be empty.", nameof(userId));
@@ -25,7 +25,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (reason.Length > 500)
                 throw new DomainException("Reason cannot exceed 500 characters.", nameof(reason));
 
-            Id = Guid.NewGuid();
             UserId = userId;
             Action = action;
             Reason = reason;

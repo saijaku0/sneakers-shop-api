@@ -1,11 +1,11 @@
-﻿using Sneakers.Shop.Backend.Domain.Enums;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class Discount
+    public class Discount : Entity
     {
-        public Guid Id { get; private set; }
         public DiscountType TypeDiscount { get; private set; }
         public DateTimeOffset StartDate { get; private set; }
         public DateTimeOffset EndDate { get; private set; }
@@ -21,7 +21,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             DateTimeOffset start,
             DateTimeOffset end,
             Guid? productId,
-            Guid? brandId)
+            Guid? brandId) : base(Guid.NewGuid())
         {
             if (start > end)
                 throw new DomainException("Cannot create discont which end before start.");
@@ -34,7 +34,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (productId.HasValue == brandId.HasValue)
                 throw new DomainException("Discount must be applied either to a product or to a brand.");
 
-            Id = Guid.NewGuid();
             DiscountValue = value;
             TypeDiscount = discount;
             StartDate = start;

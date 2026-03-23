@@ -1,10 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class TargetAudience
+    public class TargetAudience : Entity
     {
-        public Guid Id { get; private set; }
         public string Title { get; private set; } = string.Empty;
         public bool IsDeleted { get; private set; }
         public DateTimeOffset? DeleteAt { get; private set; }
@@ -12,12 +12,10 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         private TargetAudience() { }
 
         public TargetAudience(string title)
+            : base(Guid.NewGuid())
         {
             IsDeleted = false;
-
             SetAudienceName(title);
-
-            Id = Guid.NewGuid();
         }
 
         public void SetAudienceName(string audience)
