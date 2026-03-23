@@ -1,9 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Enums;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.ValueObjects;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class UserProfile
+    public class UserProfile : IEquatable<UserProfile>
     {
         public Guid Id { get; private set; }
         public string Email { get; private set; } = string.Empty;
@@ -11,6 +12,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public int WarningCount { get; private set; }
         public IReadOnlyCollection<WishlistItem> WishlistItems => _wishlistItems.AsReadOnly();
         private readonly List<WishlistItem> _wishlistItems = [];
+        public IReadOnlyCollection<ModerationLog> ModerationLogs => _moderationLogs.AsReadOnly();
+        private readonly List<ModerationLog> _moderationLogs = [];
         public bool IsDeleted { get; private set; }
         public Address? DefaultShippingAddress { get; private set; }
         public DateTimeOffset RegistrationDate { get; private set; }
@@ -20,7 +23,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public UserProfile(
             Guid userId,
-            Address address,
             string email)
         {
             if (userId == Guid.Empty)
@@ -32,7 +34,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Email = email;
             WarningCount = 0;
             IsFlagged = false;
-            DefaultShippingAddress = address;
             RegistrationDate = DateTimeOffset.UtcNow;
             IsDeleted = false;
             DeletedAt = null;
@@ -41,19 +42,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         private void CheckIfUserDeleted(string message)
         {
             if (IsDeleted) throw new DomainException(message);
-        }
-
-        public void IssueWarning()
-        {
-            if (IsFlagged)
-                throw new DomainException("User is already flagged. Cannot issue more warnings.");
-
-            CheckIfUserDeleted("User is deleted.");
-
-            WarningCount++;
-
-            if (WarningCount >= 3)
-                IsFlagged = true;
         }
 
         public void UpdateDefaultAddress(Address newAddress)
@@ -85,7 +73,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 item.Remove();
         }
 
-        public void Unflag()
+        public void Unflag(string reason)
         {
             if (IsDeleted)
                 throw new DomainException("Cannot modify a deleted profile.");
@@ -93,6 +81,28 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException("User is not flagged.");
 
             IsFlagged = false;
+            _moderationLogs.Add(new ModerationLog(Id, ModerationAction.Unflagged, reason));
         }
+
+        public void IssueWarning(string reason)
+        {
+            if (IsFlagged)
+                throw new DomainException("User is already flagged. Cannot issue more warnings.");
+
+            CheckIfUserDeleted("User is deleted.");
+            _moderationLogs.Add(new ModerationLog(Id, ModerationAction.WarningIssued, reason));
+
+            WarningCount++;
+
+            if (WarningCount >= 3)
+            {
+                IsFlagged = true;
+                _moderationLogs.Add(new ModerationLog(Id, ModerationAction.Flagged, "Automatically flagged after 3 warnings."));
+            }
+        }
+
+        public bool Equals(UserProfile? other) => other != null && Id.Equals(other.Id);
+        public override bool Equals(object? obj) => Equals(obj as UserProfile);
+        public override int GetHashCode() => Id.GetHashCode();
     }
 }
