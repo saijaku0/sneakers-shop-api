@@ -29,7 +29,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException($"Discont: {value}, cannot be less than zero.");
             if (discount == DiscountType.Percentage && (value > 100 || value < 0))
                 throw new DomainException("Percentage discount must be between 0 and 100.", nameof(value));
-            if (productId == Guid.Empty && brandId == Guid.Empty)
+            if (productId == Guid.Empty || brandId == Guid.Empty)
                 throw new DomainException("Brand ID and product ID cannot be empty.");
             if (productId.HasValue == brandId.HasValue)
                 throw new DomainException("Discount must be applied either to a product or to a brand.");
