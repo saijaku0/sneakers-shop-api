@@ -1,10 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class Product
+    public class Product : Entity
     {
-        public Guid Id { get; private set; }
         public Guid BrandId { get; private set; }
         public Brand? SneakersBrand { get; private set; }
         public Guid AudienceId { get; private set; }
@@ -34,7 +34,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             string productName,
             string model,
             string description,
-            decimal basePrice)
+            decimal basePrice) : base(Guid.NewGuid())
         {
             IsActive = true;
 
@@ -44,7 +44,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             UpdateProductDescAndName(description, productName);
             UpdateProductPrice(basePrice);
 
-            Id = Guid.NewGuid();
             CreateAt = DateTimeOffset.UtcNow;
         }
 

@@ -1,10 +1,10 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class OrderItem : IEquatable<OrderItem>
+    public class OrderItem : Entity
     {
-        public Guid Id { get; private set; }
         public Guid OrderId { get; private set; }
         public Guid WarehouseItemId { get; private set; }
         public int Quantity { get; private set; }
@@ -19,7 +19,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Guid warehouseItemId,
             int quantity,
             decimal unitPrice,
-            decimal discountAmount)
+            decimal discountAmount) : base(Guid.NewGuid())
         {
             if (orderId == Guid.Empty)
                 throw new DomainException("OrderId cannot be empty.", nameof(orderId));
@@ -34,18 +34,11 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (discountAmount > unitPrice)
                 throw new DomainException("DiscountAmount cannot exceed UnitPrice.", nameof(discountAmount));
 
-            Id = Guid.NewGuid();
             OrderId = orderId;
             WarehouseItemId = warehouseItemId;
             Quantity = quantity;
             UnitPrice = unitPrice;
             DiscountAmount = discountAmount;
         }
-
-        public bool Equals(OrderItem? other) => other != null && Id.Equals(other.Id);
-
-        public override bool Equals(object? obj) => Equals(obj as OrderItem);
-
-        public override int GetHashCode() => Id.GetHashCode();
     }
 }

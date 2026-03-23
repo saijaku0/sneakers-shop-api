@@ -1,11 +1,11 @@
-﻿using Sneakers.Shop.Backend.Domain.Enums;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class PromoCode : IEquatable<PromoCode>
+    public class PromoCode : Entity
     {
-        public Guid Id { get; private set; }
         public Guid? UserId { get; private set; }
         public Guid? ProductId { get; private set; }
         public DiscountType DiscountType { get; private set; }
@@ -24,7 +24,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             DateTimeOffset validFrom,
             DateTimeOffset expirationDate,
             Guid? userId = null,
-            Guid? productId = null)
+            Guid? productId = null) : base(Guid.NewGuid())
         {
             if (string.IsNullOrWhiteSpace(code))
                 throw new DomainException("Promo code cannot be empty.", nameof(code));
@@ -40,7 +40,6 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (discountType == DiscountType.FixedAmount && discountValue <= 0)
                 throw new DomainException("Fixed amount discount must be positive.");
 
-            Id = Guid.NewGuid();
             Code = code.Trim().ToUpperInvariant(); 
             DiscountType = discountType;
             DiscountValue = discountValue;
@@ -108,9 +107,5 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                    (UserId == null || UserId == userId) &&
                    (ProductId == null || ProductId == productId);
         }
-
-        public override bool Equals(object? obj) => obj is PromoCode other && Id.Equals(other.Id);
-        public override int GetHashCode() => Id.GetHashCode();
-        public bool Equals(PromoCode? other) => other != null && Id.Equals(other.Id);
     }
 }

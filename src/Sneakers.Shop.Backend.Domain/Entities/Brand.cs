@@ -1,22 +1,21 @@
-﻿using Sneakers.Shop.Backend.Domain.Exceptions;
+﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class Brand
+    public class Brand : Entity
     {
-        public Guid Id { get; private set; }
         public string BrandName { get; private set; } = string.Empty;
         public bool IsDeleted { get; private set; }
         public DateTimeOffset? DeletedAt { get; private set; }
 
         private Brand() { }
 
-        public Brand(string newName)
+        public Brand(string newName) : base(Guid.NewGuid())
         {
             IsDeleted = false;
 
             UpdateBrandName(newName);
-            Id = Guid.NewGuid();
         }
 
         public void UpdateBrandName(string name)
