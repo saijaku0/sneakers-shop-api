@@ -5,6 +5,6 @@ namespace Sneakers.Shop.Backend.Domain.Interfaces
 {
     public interface ISizeConversionService
     {
-        decimal GetEquivalentSize(decimal size, MeasureSizes measureType, MeasureSizes targetMeasureType, string audience);
+        decimal GetEquivalentSize(decimal size, MeasureSizes measureType, MeasureSizes targetMeasureType, Audience audience);
     }
 }

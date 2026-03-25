@@ -1,4 +1,5 @@
 ﻿using Sneakers.Shop.Backend.Domain.Abstractions;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
@@ -7,8 +8,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
     {
         public Guid BrandId { get; private set; }
         public Brand? SneakersBrand { get; private set; }
-        public Guid AudienceId { get; private set; }
-        public TargetAudience? TargetAudience { get; private set; }
+        public Audience TargetAudience { get; private set; }
 
         public IReadOnlyCollection<WarehouseItem> WarehouseItems => _warehouseItems.AsReadOnly();
         private readonly List<WarehouseItem> _warehouseItems = [];
@@ -24,13 +24,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public List<string>? ImagesUrls { get; private set; }
         public bool IsActive {  get; private set; }
-        public DateTimeOffset CreateAt {  get; private set; }
+        public DateTimeOffset CreatedAt {  get; private set; }
 
         private Product() { }
 
         public Product(
             Guid brandId,
-            Guid audienceId,
+            Audience audience,
             string productName,
             string model,
             string description,
@@ -39,12 +39,12 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             IsActive = true;
 
             UpdateBrand(brandId);
-            UpdateAudience(audienceId);
+            UpdateAudience(audience);
             UpdateProductModel(model);
             UpdateProductDescAndName(description, productName);
             UpdateProductPrice(basePrice);
 
-            CreateAt = DateTimeOffset.UtcNow;
+            CreatedAt = DateTimeOffset.UtcNow;
         }
 
         public void UpdateProductDescAndName(
@@ -97,12 +97,12 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             BrandId = newBrandId;
         }
 
-        public void UpdateAudience(Guid newAudienceId)
+        public void UpdateAudience(Audience newAudience)
         {
             if (!IsActive) throw new DomainException("You cannot modify deactivated product");
-            if (newAudienceId == Guid.Empty) throw new DomainException("Audience ID cannot be empty");
+            if (!Enum.IsDefined(typeof(Audience), newAudience)) throw new DomainException("Audience incorrect");
 
-            AudienceId = newAudienceId;
+            TargetAudience = newAudience;
         }
 
         public void UpdateProductStatus(bool status)

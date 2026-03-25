@@ -33,11 +33,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .HasForeignKey(p => p.BrandId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(a => a.TargetAudience)
-                .WithMany()
-                .HasForeignKey(a => a.AudienceId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasMany(w => w.WarehouseItems)
                 .WithOne()
                 .HasForeignKey(w => w.ProductId)
