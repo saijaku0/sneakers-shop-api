@@ -6,6 +6,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
 {
     public class PromoCodeConfiguration : IEntityTypeConfiguration<PromoCode>
     {
+        private readonly string _promocodeValue = "decimal(18,2)";
         public void Configure(EntityTypeBuilder<PromoCode> builder)
         {
             builder.ToTable($"{nameof(PromoCode)}s");
@@ -17,7 +18,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
 
             builder.Property(p => p.DiscountValue)
                 .IsRequired()
-                .HasColumnType("decimal(18,2)");
+                .HasColumnType(_promocodeValue);
             builder.Property(p => p.DiscountType)
                 .IsRequired();
             builder.Property(p => p.ValidFrom)
