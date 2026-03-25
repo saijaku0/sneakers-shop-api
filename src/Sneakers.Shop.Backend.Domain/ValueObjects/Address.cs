@@ -11,6 +11,8 @@ namespace Sneakers.Shop.Backend.Domain.ValueObjects
         public string HouseNumber { get; }
         public int PostalCode { get; }
 
+        private Address() { }
+
         public Address(
         string country,
         string state,
