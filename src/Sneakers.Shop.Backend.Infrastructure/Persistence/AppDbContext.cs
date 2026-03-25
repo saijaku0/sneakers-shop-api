@@ -12,7 +12,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Persistence
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<WarehouseItem> WarehouseItems { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<TargetAudience> TargetAudiences { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<PromoCode> PromoCodes { get; set; }
         public DbSet<Product> Products { get; set; }

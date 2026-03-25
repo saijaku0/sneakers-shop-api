@@ -4,19 +4,13 @@ using Sneakers.Shop.Backend.Domain.Interfaces;
 
 namespace Sneakers.Shop.Backend.Domain.Services
 {
-    enum Gender
-    {
-        Male,
-        Female,
-    }
-
     public class SizeConversionService : ISizeConversionService
     {
-        private static IReadOnlyDictionary<Gender, Dictionary<decimal, (decimal UK, decimal EU, decimal CM)>> Sizes { get => _sizes.AsReadOnly(); }
+        private static IReadOnlyDictionary<Audience, Dictionary<decimal, (decimal UK, decimal EU, decimal CM)>> Sizes { get => _sizes.AsReadOnly(); }
 
-        static private readonly Dictionary<Gender, Dictionary<decimal, (decimal UK, decimal EU, decimal CM)>> _sizes = new()
+        static private readonly Dictionary<Audience, Dictionary<decimal, (decimal UK, decimal EU, decimal CM)>> _sizes = new()
         {
-            [Gender.Male] = new()
+            [Audience.Male] = new()
                     {
                 { 6.0m,  (5.5m, 39.0m, 24.0m) },
                 { 7.0m,  (6.5m, 40.0m, 25.0m) },
@@ -27,7 +21,7 @@ namespace Sneakers.Shop.Backend.Domain.Services
                 { 12.0m, (11.5m, 46.0m, 30.0m) }
             },
 
-            [Gender.Female] = new()
+            [Audience.Female] = new()
             {
                 { 5.0m,  (3.0m, 35.5m, 22.0m) },
                 { 6.0m,  (4.0m, 36.5m, 23.0m) },
@@ -42,13 +36,9 @@ namespace Sneakers.Shop.Backend.Domain.Services
             decimal size, 
             MeasureSizes measureType, 
             MeasureSizes targetMeasureType, 
-            string audience)
+            Audience audience)
         {
-            bool getGender = Enum.TryParse<Gender>(audience, out Gender gender);
-            if (!getGender)
-                throw new DomainException($"Incorect gender type: {audience}.");
-
-            var genderTable = _sizes[gender]
+            var genderTable = _sizes[audience]
                 .FirstOrDefault(row => 
                 measureType switch
                 {
