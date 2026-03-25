@@ -22,7 +22,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public string Description { get; private set; } = string.Empty;
         public decimal BasePrice { get; private set; }
 
-        public List<string>? ImagesUrls { get; private set; }
+        public IReadOnlyList<string>? ImagesUrls => _imagesUrls?.AsReadOnly();
+        private List<string>? _imagesUrls = [];
         public bool IsActive {  get; private set; }
         public DateTimeOffset CreatedAt {  get; private set; }
 
@@ -83,10 +84,10 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public void UpdateProductPhoto(List<string> photosUrls)
         {
             if (!IsActive) throw new DomainException("You cannot modify deactivated product");
-            if (photosUrls is null)
+            if (photosUrls is null || photosUrls.Count == 0)
                 throw new DomainException("Photos cannot be empty");
 
-            ImagesUrls = photosUrls;
+            _imagesUrls = [.. photosUrls];
         }
 
         public void UpdateBrand (Guid newBrandId)
