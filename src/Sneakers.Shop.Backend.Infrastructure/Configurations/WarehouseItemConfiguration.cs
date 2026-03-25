@@ -19,11 +19,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .HasForeignKey(s => s.SizeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne<Product>()
-                .WithMany()
-                .HasForeignKey(p => p.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.HasIndex(x => new {x.ProductId, x.SizeId})
                 .IsUnique();
         }

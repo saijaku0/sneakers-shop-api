@@ -40,7 +40,8 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
 
             builder.HasMany(w => w.WarehouseItems)
                 .WithOne()
-                .HasForeignKey(w => w.ProductId);
+                .HasForeignKey(w => w.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.Navigation(p => p.WarehouseItems)
                 .HasField(_warehouseItems)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
