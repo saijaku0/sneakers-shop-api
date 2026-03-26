@@ -12,8 +12,8 @@ using Sneakers.Shop.Backend.Infrastructure.Persistence;
 namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260325183722_RemoveTargetAudience")]
-    partial class RemoveTargetAudience
+    [Migration("20260325193304_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
