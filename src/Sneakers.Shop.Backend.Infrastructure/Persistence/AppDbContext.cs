@@ -22,6 +22,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Persistence
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Brand> Brands { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
