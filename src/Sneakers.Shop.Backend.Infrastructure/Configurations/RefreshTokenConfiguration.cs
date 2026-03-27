@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Sneakers.Shop.Backend.Domain.Entities;
+using Sneakers.Shop.Backend.Infrastructure.Identity;
 
 namespace Sneakers.Shop.Backend.Infrastructure.Configurations
 {
@@ -17,7 +18,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
             builder.HasIndex(rt => rt.Token)
                 .IsUnique();
 
-            builder.HasOne<UserProfile>()
+            builder.HasOne<ApplicationUser>()
                 .WithMany()
                 .HasForeignKey(rt => rt.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
