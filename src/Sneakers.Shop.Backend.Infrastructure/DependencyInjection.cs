@@ -39,6 +39,9 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<IIdentityService, IdentityService>();
             service.AddScoped<IAuthService, AuthService>();
 
+            service.AddScoped<RoleSeeder>();
+            service.AddAuthorization();
+
             service.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = true;
