@@ -45,7 +45,7 @@ namespace Sneakers.Shop.Backend.Application.Auth.Command
             var refreshTokenEntity = new RefreshToken(
                 userId: userId,
                 token: refreshToken,
-                expiresAt: DateTimeOffset.UtcNow.AddDays()
+                expiresAt: DateTimeOffset.UtcNow.AddDays(_jwtService.GetRefreshTokenExpiryDays())
             );
 
             await _refreshToken.AddAsync(refreshTokenEntity);
