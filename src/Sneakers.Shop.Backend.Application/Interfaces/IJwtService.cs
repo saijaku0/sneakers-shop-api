@@ -7,6 +7,7 @@ namespace Sneakers.Shop.Backend.Application.Interfaces
     {
         string GenerateAccessToken(TokenGenerationRequest request);
         string GenerateRefreshToken();
+        int GetRefreshTokenExpiryDays();
         ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
     }
 }
