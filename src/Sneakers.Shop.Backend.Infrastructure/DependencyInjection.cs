@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Sneakers.Shop.Backend.Application.Auth.Command;
+using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
@@ -31,6 +33,9 @@ namespace Sneakers.Shop.Backend.Infrastructure
 
             service.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             service.AddScoped<IJwtService, JwtService>();
+            service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            service.AddScoped<IIdentityService, IdentityService>();
+            service.AddScoped<IAuthService, AuthService>();
 
             service.AddAuthentication(options =>
             {
