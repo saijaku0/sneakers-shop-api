@@ -61,7 +61,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!)),
+                        Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]!)),
                     ValidateIssuer = true,
                     ValidIssuer = configuration["JwtSettings:Issuer"],
                     ValidateAudience = true,
