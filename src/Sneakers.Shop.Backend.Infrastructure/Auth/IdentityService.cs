@@ -9,10 +9,10 @@ namespace Sneakers.Shop.Backend.Infrastructure.Auth
 {
     public class IdentityService(
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager) : IIdentityService
+        RoleManager<IdentityRole<Guid>> roleManager) : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
 
         /// <summary>
         /// Creates a new user account with the specified registration details.
