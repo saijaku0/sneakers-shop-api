@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
+using Sneakers.Shop.Backend.Infrastructure.Identity;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
 using Sneakers.Shop.Backend.Infrastructure.Repositories;
 using System.Text;
@@ -36,6 +38,15 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             service.AddScoped<IIdentityService, IdentityService>();
             service.AddScoped<IAuthService, AuthService>();
+
+            service.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
 
             service.AddAuthentication(options =>
             {
