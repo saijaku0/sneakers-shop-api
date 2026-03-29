@@ -1,0 +1,23 @@
+$kind: http-request
+name: RefreshToken
+url: "{{baseUrl}}/api/v1/auth/refresh?refreshToken={{refreshToken}}"
+method: POST
+queryParams:
+  refreshToken: "{{refreshToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const response = pm.response.json();\r
+
+      pm.environment.set(\"accessToken\", response.accessToken);\r
+
+      pm.environment.set(\"refreshToken\", response.refreshToken);"
+    language: text/javascript
+order: 4241003771930679
