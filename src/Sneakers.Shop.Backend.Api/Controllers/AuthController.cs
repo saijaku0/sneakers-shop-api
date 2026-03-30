@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
+using Sneakers.Shop.Backend.Api.Filters;
 
 namespace Sneakers.Shop.Backend.Api.Controllers
 {
@@ -12,6 +13,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
     /// service.</remarks>
     /// <param name="authService">The authentication service used to process authentication requests.</param>
     [ApiController]
+    [ValidationFilter]
     [Route("api/v1/[controller]")]
     public class AuthController(IAuthService authService) : ControllerBase
     {
