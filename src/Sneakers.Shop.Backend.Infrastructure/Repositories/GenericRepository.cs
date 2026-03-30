@@ -15,7 +15,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
                 .FindAsync([id], cancellationToken);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<T>()
                 .AsNoTracking() 

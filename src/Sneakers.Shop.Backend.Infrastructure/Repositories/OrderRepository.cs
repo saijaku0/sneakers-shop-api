@@ -18,7 +18,11 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
                 .FirstOrDefaultAsync(o => o.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Order>> GetByUserIdAsync(int page, int pageSize, Guid userId, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Order>> GetByUserIdAsync(
+            int page, 
+            int pageSize, 
+            Guid userId, 
+            CancellationToken cancellationToken = default)
         {
             return await _dbContext.Orders
                 .AsNoTracking()
