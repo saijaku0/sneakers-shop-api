@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Sneakers.Shop.Backend.Api.Middleware;
 using Sneakers.Shop.Backend.Application.Injection;
 using Sneakers.Shop.Backend.Infrastructure;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
@@ -9,6 +10,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
+
+builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddOpenApi(options =>
 {
