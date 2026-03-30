@@ -40,6 +40,11 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken ct)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _authService.RegisterAsync(request, ct);
             return Ok(result);
         }
