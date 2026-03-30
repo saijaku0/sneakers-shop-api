@@ -6,7 +6,7 @@ namespace Sneakers.Shop.Backend.Domain.Repositories
     {
         Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Product?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default);
-        Task<IEnumerable<Product>> GetAllActiveAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<Product>> GetAllActiveAsync(int page, int pageSize, CancellationToken cancellationToken = default);
         Task AddAsync(Product product, CancellationToken cancellationToken = default);
         void Update(Product product);
         void Delete(Product product);

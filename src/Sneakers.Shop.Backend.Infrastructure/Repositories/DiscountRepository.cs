@@ -14,7 +14,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Discount>> GetActiveAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Discount>> GetActiveAsync(CancellationToken cancellationToken = default)
         {
             var now = DateTime.UtcNow;
 
