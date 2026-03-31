@@ -8,7 +8,7 @@ body:
 
     \    \"email\": \"test@test.com\",\r
 
-    \    \"password\": \"Test1234\"\r
+    \    \"password\": \"Test1234!\"\r
 
     }"
 scripts:
