@@ -10,6 +10,22 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd=pg_isready 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -25,6 +41,25 @@ jobs:
       - name: Build dotnet
         run: dotnet build --no-restore --configuration Release
       
-      - name: Run Unit Tests
-        run: dotnet test --no-build --configuration Release --logger trx --results-directory "TestResults"
+      - name: Run migrations
+        run: dotnet ef database update --project src/Sneakers.Shop.Backend.Infrastructure --startup-project src/Sneakers.Shop.Backend.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};
+
+      - name: Run Api
+        run: dotnet run --project src/Sneakers.Shop.Backend.Api --configuration Release &
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};"
+          JwtSettings__SecretKey: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: Wait for API
+        run: sleep 10
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman tests
+        run: newman run postman/globals/collection.json --environment postman/globals/environment.json
+
 
