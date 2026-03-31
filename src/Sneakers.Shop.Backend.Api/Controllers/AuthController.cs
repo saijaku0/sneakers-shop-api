@@ -55,7 +55,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// result with the new token if the refresh is successful; otherwise, returns a bad request result with an
         /// error message.</returns>
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromQuery] string refreshToken, CancellationToken ct)
+        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken ct)
         {
             var result = await _authService.RefreshTokenAsync(refreshToken, ct);
             return Ok(result);

@@ -1,7 +1,7 @@
 name: SneakersShopCI
 values:
   - key: baseUrl
-    value: 'https://localhost:7149'
+    value: 'http://localhost:5000'
     enabled: true
   - key: accessToken
     value: ''
