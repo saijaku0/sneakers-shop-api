@@ -62,10 +62,12 @@ jobs:
       - name: Wait for API
         run: sleep 10
 
-      - name: Install Newman
-        run: npm install -g newman
+      - name: Install Postman CLI
+        run: npm install -g @postman/cli
+
+      - name: Postman Auth
+        run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
 
       - name: Run Postman tests
-        run: newman run postman/globals/collection.json --environment postman/globals/environment.json
-
+        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopDev.environment
 
