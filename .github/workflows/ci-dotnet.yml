@@ -61,7 +61,12 @@ jobs:
           JwtSettings__SecretKey: ${{ secrets.JWT_SECRET_KEY }}
 
       - name: Wait for API
-        run: sleep 10
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:5000/health && break
+            echo "Waiting for API... attempt $i"
+            sleep 2
+          done
 
       - name: Install Postman CLI
         run: sudo npm install -g postman-cli
