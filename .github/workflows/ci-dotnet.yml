@@ -41,6 +41,12 @@ jobs:
       - name: Build dotnet
         run: dotnet build --no-restore --configuration Release
       
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       - name: Run migrations
         run: dotnet ef database update --project src/Sneakers.Shop.Backend.Infrastructure --startup-project src/Sneakers.Shop.Backend.Api
         env:
