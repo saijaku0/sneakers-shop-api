@@ -63,7 +63,7 @@ jobs:
         run: sleep 10
 
       - name: Install Postman CLI
-        run: npm install -g @postman
+        run: npm install -g postman-cli
 
       - name: Postman Auth
         run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
