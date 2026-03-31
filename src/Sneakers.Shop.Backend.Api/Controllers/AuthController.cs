@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Sneakers.Shop.Backend.Api.DTOs;
+using Sneakers.Shop.Backend.Api.Filters;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
-using Sneakers.Shop.Backend.Api.Filters;
 
 namespace Sneakers.Shop.Backend.Api.Controllers
 {
@@ -47,17 +48,16 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         }
 
         /// <summary>
-        /// Attempts to refresh the authentication token using the provided refresh token.
+        /// Exchanges a valid refresh token for a new access token and refresh token pair.
         /// </summary>
-        /// <param name="refreshToken">The refresh token to use for obtaining a new authentication token. Cannot be null or empty.</param>
+        /// <param name="req">The request containing the refresh token to be validated and exchanged.</param>
         /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
-        /// <returns>An <see cref="IActionResult"/> containing the result of the token refresh operation. Returns a successful
-        /// result with the new token if the refresh is successful; otherwise, returns a bad request result with an
-        /// error message.</returns>
+        /// <returns>An IActionResult containing the new access and refresh tokens if the refresh token is valid; otherwise, an
+        /// error response.</returns>
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken, CancellationToken ct)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest req, CancellationToken ct)
         {
-            var result = await _authService.RefreshTokenAsync(refreshToken, ct);
+            var result = await _authService.RefreshTokenAsync(req.RefreshToken, ct);
             return Ok(result);
         }
     }
