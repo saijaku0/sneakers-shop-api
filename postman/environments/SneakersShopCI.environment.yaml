@@ -1,13 +1,11 @@
-name: Sneakers Shop Dev
+name: SneakersShopCI
 values:
   - key: baseUrl
-    value: https://localhost:7149
+    value: 'https://localhost:7149'
     enabled: true
-
   - key: accessToken
-    value: ""
+    value: ''
     enabled: true
-
   - key: refreshToken
-    value: ""
+    value: ''
     enabled: true

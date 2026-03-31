@@ -10,6 +10,22 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd=pg_isready 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -25,6 +41,39 @@ jobs:
       - name: Build dotnet
         run: dotnet build --no-restore --configuration Release
       
-      - name: Run Unit Tests
-        run: dotnet test --no-build --configuration Release --logger trx --results-directory "TestResults"
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add dotnet tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Run migrations
+        run: dotnet ef database update --project src/Sneakers.Shop.Backend.Infrastructure --startup-project src/Sneakers.Shop.Backend.Api
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};
+
+      - name: Run Api
+        run: dotnet run --project src/Sneakers.Shop.Backend.Api --configuration Release --no-launch-profile &
+        env:
+          ASPNETCORE_URLS: "http://localhost:5000"
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};"
+          JwtSettings__SecretKey: ${{ secrets.JWT_SECRET_KEY }}
+
+      - name: Wait for API
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:5000/health && break
+            echo "Waiting for API... attempt $i"
+            sleep 2
+          done
+
+      - name: Install Postman CLI
+        run: sudo npm install -g postman-cli
+
+      - name: Postman Auth
+        run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
+
+      - name: Run Postman tests
+        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopCI.postman_environment.json --verbose
 
