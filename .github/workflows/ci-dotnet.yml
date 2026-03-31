@@ -54,7 +54,7 @@ jobs:
           ConnectionStrings__DefaultConnection: Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};
 
       - name: Run Api
-        run: dotnet run --project src/Sneakers.Shop.Backend.Api --configuration Release &
+        run: dotnet run --project src/Sneakers.Shop.Backend.Api --configuration Release --no-launch-profile &
         env:
           ASPNETCORE_URLS: "http://localhost:5000"
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};"
