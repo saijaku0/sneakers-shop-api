@@ -14,7 +14,7 @@ namespace Sneakers.Shop.Backend.Application.Auth.Validations
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
                 .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
-                .Matches(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$")
+                .Matches(@"^(?=.*[A-Za-z])(?=.*\d).{6,}$")
                 .WithMessage("Password must contain at least one letter and one number.");
         }
     }
