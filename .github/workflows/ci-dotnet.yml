@@ -56,6 +56,7 @@ jobs:
       - name: Run Api
         run: dotnet run --project src/Sneakers.Shop.Backend.Api --configuration Release &
         env:
+          ASPNETCORE_URLS: "http://localhost:5000"
           ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${{ secrets.POSTGRES_DB }};User Id=${{ secrets.POSTGRES_USER }};Password=${{ secrets.POSTGRES_PASSWORD }};"
           JwtSettings__SecretKey: ${{ secrets.JWT_SECRET_KEY }}
 
@@ -69,5 +70,5 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
 
       - name: Run Postman tests
-        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopDev.environment.yaml
+        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopCI.environment.yaml
 
