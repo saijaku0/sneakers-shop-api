@@ -75,5 +75,5 @@ jobs:
         run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
 
       - name: Run Postman tests
-        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopCI.postman_environment.json
+        run: postman collection run postman/collections/Auth --environment postman/environments/SneakersShopCI.postman_environment.json --verbose
 
