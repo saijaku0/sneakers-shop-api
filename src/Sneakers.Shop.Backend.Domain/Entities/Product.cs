@@ -16,6 +16,11 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
         private readonly List<Comment> _comments = [];
 
+        public IReadOnlyCollection<ProductDiscount> Discounts => _discounts.AsReadOnly();
+        private readonly List<ProductDiscount> _discounts = [];
+
+        public decimal AverageRating { get; private set; }
+
         public string ProductName { get; private set; } = string.Empty;
         public string Model { get; private set; } = string.Empty;
 
@@ -24,8 +29,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public IReadOnlyList<string>? ImagesUrls => _imagesUrls?.AsReadOnly();
         private List<string>? _imagesUrls = [];
-        public bool IsActive {  get; private set; }
-        public DateTimeOffset CreatedAt {  get; private set; }
+        public bool IsActive { get; private set; }
+        public DateTimeOffset CreatedAt { get; private set; }
 
         private Product() { }
 
@@ -45,11 +50,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             UpdateProductDescAndName(description, productName);
             UpdateProductPrice(basePrice);
 
+            AverageRating = 0;
+
             CreatedAt = DateTimeOffset.UtcNow;
         }
 
         public void UpdateProductDescAndName(
-            string description, 
+            string description,
             string productName)
         {
             if (!IsActive)
@@ -65,7 +72,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public void UpdateProductPrice(decimal price)
         {
-            if (!IsActive) 
+            if (!IsActive)
                 throw new DomainException("You cannot modify deactivated product");
             if (price < 0) throw new DomainException("Price cannot be less than 0");
 
@@ -90,7 +97,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             _imagesUrls = [.. photosUrls];
         }
 
-        public void UpdateBrand (Guid newBrandId)
+        public void UpdateBrand(Guid newBrandId)
         {
             if (!IsActive) throw new DomainException("You cannot modify deactivated product");
             if (newBrandId == Guid.Empty) throw new DomainException("Brand ID cannot be empty");
@@ -112,6 +119,42 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException($"Cannot update status product already have this status: {IsActive}");
 
             IsActive = status;
+        }
+
+        public void AddWarehouseItem(WarehouseItem item)
+        {
+            if (!IsActive)
+                throw new DomainException("You cannot modify deactivated product");
+            ArgumentNullException.ThrowIfNull(item);
+
+            _warehouseItems.Add(item);
+        }
+
+        public void AddComment(Comment comment)
+        {
+            if (!IsActive)
+                throw new DomainException("You cannot modify deactivated product");
+            ArgumentNullException.ThrowIfNull(comment);
+            _comments.Add(comment);
+        }
+
+        public void AddDiscount(ProductDiscount discount)
+        {
+            if (!IsActive)
+                throw new DomainException("You cannot modify deactivated product");
+            ArgumentNullException.ThrowIfNull(discount);
+            _discounts.Add(discount);
+            UpdateAverageRating();
+        }
+
+        public void UpdateAverageRating()
+        {
+            if (_comments.Count == 0)
+            {
+                AverageRating = 0;
+                return;
+            }
+            AverageRating = _comments.Average(c => c.Rating);
         }
     }
 }

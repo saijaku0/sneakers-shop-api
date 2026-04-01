@@ -19,15 +19,24 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
         public async Task<Product?> GetByIdWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Products
+                .Include(p => p.Discounts)
                 .Include(p => p.WarehouseItems)
                 .Include(p => p.Comments)
                 .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+        }
+
+        public async Task<int> GetTotalProductsCountAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Products
+                .Where(p => p.IsActive)
+                .CountAsync(cancellationToken);
         }
 
         public async Task<IReadOnlyList<Product>> GetAllActiveAsync(int page, int pageSize, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Products
                 .AsNoTracking()
+                .Include(p => p.Discounts)
                 .Where(p => p.IsActive)
                 .Skip((page-1) * pageSize)
                 .Take(pageSize)
