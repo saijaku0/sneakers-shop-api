@@ -23,15 +23,9 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
             builder.Property(d => d.TypeDiscount)
                 .IsRequired();
 
-            builder.HasOne<Product>()
-                .WithMany()
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne<Brand>()
-                .WithMany()
-                .HasForeignKey(b => b.BrandId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasDiscriminator<string>("Discriminator")
+                .HasValue<ProductDiscount>("ProductDiscount")
+                .HasValue<BrandDiscount>("BrandDiscount");
         }
     }
 }

@@ -27,7 +27,6 @@ namespace Sneakers.Shop.Backend.Infrastructure
 
             service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             service.AddScoped<IPromoCodeRepository, PromoCodeRepository>();
-            service.AddScoped<IDiscountRepository, DiscountRepository>();
             service.AddScoped<IUnitOfWork, UnitOfWork>();
             service.AddScoped<IProductRepository, ProductRepository>();
             service.AddScoped<IOrderRepository, OrderRepository>();

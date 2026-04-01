@@ -190,8 +190,8 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Review")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -211,17 +211,16 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("BrandId")
-                        .HasColumnType("uuid");
-
                     b.Property<decimal>("DiscountValue")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("character varying(21)");
+
                     b.Property<DateTimeOffset>("EndDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ProductId")
-                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -231,11 +230,11 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
-                    b.HasIndex("ProductId");
-
                     b.ToTable("Discounts", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Discount");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.DropperPayout", b =>
@@ -388,6 +387,9 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<decimal>("AverageRating")
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("BasePrice")
                         .HasColumnType("decimal(18,2)");
@@ -774,6 +776,30 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.BrandDiscount", b =>
+                {
+                    b.HasBaseType("Sneakers.Shop.Backend.Domain.Entities.Discount");
+
+                    b.Property<Guid>("BrandId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasDiscriminator().HasValue("BrandDiscount");
+                });
+
+            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.ProductDiscount", b =>
+                {
+                    b.HasBaseType("Sneakers.Shop.Backend.Domain.Entities.Discount");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasDiscriminator().HasValue("ProductDiscount");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -838,19 +864,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.Discount", b =>
-                {
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Brand", null)
-                        .WithMany()
-                        .HasForeignKey("BrandId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.DropperPayout", b =>
@@ -1081,6 +1094,29 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.BrandDiscount", b =>
+                {
+                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Brand", null)
+                        .WithMany("Discounts")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.ProductDiscount", b =>
+                {
+                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Product", null)
+                        .WithMany("Discounts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.Brand", b =>
+                {
+                    b.Navigation("Discounts");
+                });
+
             modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Items");
@@ -1091,6 +1127,8 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
             modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.Product", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Discounts");
 
                     b.Navigation("WarehouseItems");
                 });

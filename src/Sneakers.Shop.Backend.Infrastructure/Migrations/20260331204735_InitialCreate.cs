@@ -31,9 +31,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RefreshToken = table.Column<string>(type: "text", nullable: true),
-                    RefreshTokenExpiryTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    LastUpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -86,6 +83,22 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SalesSnapshots",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    TotalRevenue = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    TotalOrders = table.Column<int>(type: "integer", nullable: false),
+                    TotalPayouts = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    AverageOrderValue = table.Column<decimal>(type: "numeric(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalesSnapshots", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,12 +244,35 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     BrandId = table.Column<Guid>(type: "uuid", nullable: false),
                     TargetAudience = table.Column<int>(type: "integer", nullable: false),
+                    AverageRating = table.Column<decimal>(type: "numeric", nullable: false),
                     ProductName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     Model = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
@@ -250,6 +286,47 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Products_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brand",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductSubmissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DropId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TargetAudience = table.Column<string>(type: "text", nullable: false),
+                    ProductName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Model = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    BasePrice = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    RejectionReason = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ModeratorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CheckedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductSubmissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductSubmissions_AspNetUsers_DropId",
+                        column: x => x.DropId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSubmissions_AspNetUsers_ModeratorId",
+                        column: x => x.ModeratorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductSubmissions_Brand_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brand",
                         principalColumn: "Id",
@@ -307,7 +384,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Review = table.Column<int>(type: "integer", nullable: false),
+                    Rating = table.Column<decimal>(type: "numeric", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -336,8 +413,9 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     StartDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     DiscountValue = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: true),
-                    BrandId = table.Column<Guid>(type: "uuid", nullable: true)
+                    Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -354,6 +432,35 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DropperPayouts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DropperId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    PaidAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DropperPayouts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DropperPayouts_AspNetUsers_DropperId",
+                        column: x => x.DropperId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DropperPayouts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -529,6 +636,21 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DropperPayouts_DropperId",
+                table: "DropperPayouts",
+                column: "DropperId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DropperPayouts_ProductId",
+                table: "DropperPayouts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DropperPayouts_Status",
+                table: "DropperPayouts",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ModerationLogs_UserId",
                 table: "ModerationLogs",
                 column: "UserId");
@@ -554,6 +676,26 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 column: "BrandId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductSubmissions_BrandId",
+                table: "ProductSubmissions",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSubmissions_DropId",
+                table: "ProductSubmissions",
+                column: "DropId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSubmissions_ModeratorId",
+                table: "ProductSubmissions",
+                column: "ModeratorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductSubmissions_Status",
+                table: "ProductSubmissions",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PromoCodes_Code",
                 table: "PromoCodes",
                 column: "Code",
@@ -568,6 +710,23 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 name: "IX_PromoCodes_UserId",
                 table: "PromoCodes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_Token",
+                table: "RefreshTokens",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalesSnapshots_Date",
+                table: "SalesSnapshots",
+                column: "Date",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_WarehouseItems_ProductId_SizeId",
@@ -617,6 +776,9 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 name: "Discounts");
 
             migrationBuilder.DropTable(
+                name: "DropperPayouts");
+
+            migrationBuilder.DropTable(
                 name: "ModerationLogs");
 
             migrationBuilder.DropTable(
@@ -626,7 +788,16 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 name: "OrderStatusHistories");
 
             migrationBuilder.DropTable(
+                name: "ProductSubmissions");
+
+            migrationBuilder.DropTable(
                 name: "PromoCodes");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
+                name: "SalesSnapshots");
 
             migrationBuilder.DropTable(
                 name: "WishlistItems");
@@ -635,13 +806,13 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "WarehouseItems");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "UserProfiles");

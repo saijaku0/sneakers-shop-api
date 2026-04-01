@@ -14,7 +14,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
             builder.Property(c => c.Description)
                 .HasMaxLength(1000);
 
-            builder.Property(c => c.Review)
+            builder.Property(c => c.Rating)
                 .IsRequired();
 
             builder.HasOne<Product>()
