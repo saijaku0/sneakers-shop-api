@@ -7,6 +7,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
     {
         public string BrandName { get; private set; } = string.Empty;
         public bool IsDeleted { get; private set; }
+        public IReadOnlyList<BrandDiscount> Discounts => _discounts.AsReadOnly();
+        private readonly List<BrandDiscount> _discounts = [];
         public DateTimeOffset? DeletedAt { get; private set; }
 
         private Brand() { }
@@ -31,6 +33,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         {
             IsDeleted = true;
             DeletedAt = DateTimeOffset.UtcNow;
+        }
+
+        public void AddDiscount(BrandDiscount discount)
+        {
+            if (IsDeleted) throw new DomainException("You cannot add discount to removed brand");
+            ArgumentNullException.ThrowIfNull(discount);
+            _discounts.Add(discount);
         }
     }
 }
