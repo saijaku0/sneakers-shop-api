@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Sneakers.Shop.Backend.Domain.Enums;
 
-namespace Sneakers.Shop.Backend.Infrastructure.Auth
+namespace Sneakers.Shop.Backend.Infrastructure.Seeders
 {
     public class RoleSeeder(RoleManager<IdentityRole<Guid>> roleManager)
     {
