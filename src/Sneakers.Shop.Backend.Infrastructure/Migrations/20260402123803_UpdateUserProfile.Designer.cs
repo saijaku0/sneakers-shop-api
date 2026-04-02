@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Sneakers.Shop.Backend.Infrastructure.Persistence;
 namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260402123803_UpdateUserProfile")]
+    partial class UpdateUserProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1054,7 +1057,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                                 .HasColumnType("character varying(20)");
 
                             b1.Property<int>("PostalCode")
-                                .HasMaxLength(20)
                                 .HasColumnType("integer");
 
                             b1.Property<string>("State")
