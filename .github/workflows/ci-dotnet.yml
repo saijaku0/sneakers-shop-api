@@ -80,7 +80,7 @@ jobs:
 
       - name: Run Postman tests
         run: |
-          for file in postman/collections/*.json; do
+          find postman/collections -name "*.yaml" | while read file; do
             postman collection run "$file" \
               --environment postman/environments/SneakersShopCI.postman_environment.json \
               --verbose
