@@ -1,5 +1,4 @@
 using FluentValidation;
-using MediatR;
 using Scalar.AspNetCore;
 using Sneakers.Shop.Backend.Api.Middleware;
 using Sneakers.Shop.Backend.Application.Auth.Validations;
@@ -31,6 +30,7 @@ builder.Services.AddOpenApi(options =>
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddScoped<UserSeeder>();
+    builder.Services.AddScoped<BrandSeeder>();
 }
 
 var app = builder.Build();
@@ -44,6 +44,8 @@ using (var scope = app.Services.CreateScope())
     {
         var userSeeder = scope.ServiceProvider.GetRequiredService<UserSeeder>();
         await userSeeder.SeedAsync();
+        var brandSeeder = scope.ServiceProvider.GetRequiredService<BrandSeeder>();
+        await brandSeeder.SeedAsync();
     }
 }
 
