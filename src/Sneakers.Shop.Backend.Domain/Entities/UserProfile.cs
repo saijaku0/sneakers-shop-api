@@ -2,11 +2,15 @@
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.ValueObjects;
+using System.Text.RegularExpressions;
 
 namespace Sneakers.Shop.Backend.Domain.Entities
 {
-    public class UserProfile : Entity
+    public partial class UserProfile : Entity
     {
+        public string Name { get; private set; } = string.Empty;
+        public string Lastname { get; private set; } = string.Empty;
+        public string PhoneNumber { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
         public bool IsFlagged { get; private set; }
         public int WarningCount { get; private set; }
@@ -23,12 +27,18 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public UserProfile(
             Guid userId,
+            string name,
+            string lastname,
+            string phoneNumber,
             string email) : base(Guid.NewGuid())
         {
             if (userId == Guid.Empty)
                 throw new DomainException("User ID cannot be empty");
             if (string.IsNullOrWhiteSpace(email))
                 throw new DomainException("User email cannot be empty");
+
+            AddUserName(name, lastname);
+            AddPhoneNumber(phoneNumber);
 
             Id = userId;
             Email = email;
@@ -37,6 +47,30 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             RegistrationDate = DateTimeOffset.UtcNow;
             IsDeleted = false;
             DeletedAt = null;
+        }
+
+        public void AddUserName(string name, string lastname)
+        {
+            CheckIfUserDeleted("Cannot modify a deleted profile.");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new DomainException("Name cannot be empty.");
+            if (string.IsNullOrWhiteSpace(lastname))
+                throw new DomainException("Lastname cannot be empty.");
+            Name = name;
+            Lastname = lastname;
+        }
+
+        public void AddPhoneNumber(string phoneNumber)
+        {
+            CheckIfUserDeleted("Cannot modify a deleted profile.");
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+                throw new DomainException("Phone number cannot be empty.");
+
+            var regex = PhoneRegex();
+
+            if (!regex.IsMatch(phoneNumber))
+                throw new DomainException("Invalid phone number format.");
+            PhoneNumber = phoneNumber;
         }
 
         private void CheckIfUserDeleted(string message)
@@ -100,5 +134,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 _moderationLogs.Add(new ModerationLog(Id, ModerationAction.Flagged, "Automatically flagged after 3 warnings."));
             }
         }
+
+        [GeneratedRegex(@"^\+?[1-9]\d{7,14}$")]
+        private static partial Regex PhoneRegex();
     }
 }
