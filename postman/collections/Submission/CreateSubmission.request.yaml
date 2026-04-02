@@ -1,0 +1,40 @@
+$kind: http-request
+name: CreateSubmission
+url: "{{baseUrl}}/api/v1/submissions"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"brandId\": \"45e4b3f0-d488-4dba-912a-253a933eac63\",\r
+
+    \  \"targetAudience\": 1,\r
+
+    \  \"productName\": \"Nike Air Max 2024\",\r
+
+    \  \"model\": \"DX1234-001\",\r
+
+    \  \"description\": \"Free effect and adaptive Air Max.\",\r
+
+    \  \"basePrice\": 159.99\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const response = pm.response.json();\r
+
+      pm.environment.set(\"submissionId\", response);"
+    language: text/javascript
+order: 1775128396706
