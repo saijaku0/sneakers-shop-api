@@ -18,14 +18,25 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .IsRequired()
                 .HasMaxLength(256);
 
+            builder.Property(u => u.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(u => u.Lastname)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(u => u.PhoneNumber)
+                .HasMaxLength(20);
+
             builder.OwnsOne(u => u.DefaultShippingAddress, address =>
             {
-                address.Property(a => a.Country).IsRequired().HasMaxLength(100);
-                address.Property(a => a.State).IsRequired().HasMaxLength(100);
-                address.Property(a => a.City).IsRequired().HasMaxLength(100);
-                address.Property(a => a.Street).IsRequired().HasMaxLength(100);
-                address.Property(a => a.HouseNumber).IsRequired().HasMaxLength(20);
-                address.Property(a => a.PostalCode).IsRequired();
+                address.Property(a => a.Country).HasMaxLength(100);
+                address.Property(a => a.State).HasMaxLength(100);
+                address.Property(a => a.City).HasMaxLength(100);
+                address.Property(a => a.Street).HasMaxLength(100);
+                address.Property(a => a.HouseNumber).HasMaxLength(20);
+                address.Property(a => a.PostalCode).HasMaxLength(20);
             });
 
 

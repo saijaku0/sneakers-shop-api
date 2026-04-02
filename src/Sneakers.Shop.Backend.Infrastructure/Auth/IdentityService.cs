@@ -27,6 +27,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Auth
             {
                 Email = req.Email,
                 UserName = req.Email,
+                PhoneNumber = req.PhoneNumber,
             };
 
             var createdUser = await _userManager.CreateAsync(user, req.Password);
