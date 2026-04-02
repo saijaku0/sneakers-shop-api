@@ -1,4 +1,5 @@
 using FluentValidation;
+using MediatR;
 using Scalar.AspNetCore;
 using Sneakers.Shop.Backend.Api.Middleware;
 using Sneakers.Shop.Backend.Application.Auth.Validations;
@@ -27,12 +28,23 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddScoped<UserSeeder>();
+}
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<RoleSeeder>();
     await seeder.SeedAsync();
+
+    if (app.Environment.IsDevelopment())
+    {
+        var userSeeder = scope.ServiceProvider.GetRequiredService<UserSeeder>();
+        await userSeeder.SeedAsync();
+    }
 }
 
 if (app.Environment.IsDevelopment())
