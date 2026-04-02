@@ -12,6 +12,7 @@ using Sneakers.Shop.Backend.Infrastructure.Auth;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
 using Sneakers.Shop.Backend.Infrastructure.Repositories;
+using Sneakers.Shop.Backend.Infrastructure.Seeders;
 using System.Text;
 
 namespace Sneakers.Shop.Backend.Infrastructure

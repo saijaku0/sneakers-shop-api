@@ -20,6 +20,12 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             UpdateBrandName(newName);
         }
 
+        public Brand(Guid id, string newName) : base(id)
+        {
+            IsDeleted = false;
+            UpdateBrandName(newName);
+        }
+
         public void UpdateBrandName(string name)
         {
             if (IsDeleted) throw new DomainException("You cannot change removed brand name");

@@ -6,7 +6,7 @@ body:
   type: json
   content: "{\r
 
-    \  \"brandId\": \"45e4b3f0-d488-4dba-912a-253a933eac63\",\r
+    \  \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
 
     \  \"targetAudience\": 1,\r
 
@@ -36,5 +36,38 @@ scripts:
       const response = pm.response.json();\r
 
       pm.environment.set(\"submissionId\", response);"
+    language: text/javascript
+  - type: beforeRequest
+    code: "const loginResponse = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"dropper@test.com\",\r
+
+      \            password: \"Dropper1234!\"\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      \r
+
+      const response = loginResponse.json();\r
+
+      pm.environment.set(\"accessToken\", response.accessToken);\r
+
+      pm.environment.set(\"refreshToken\", response.refreshToken);"
     language: text/javascript
 order: 1775128396706
