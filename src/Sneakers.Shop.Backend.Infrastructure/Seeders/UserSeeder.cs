@@ -6,7 +6,7 @@ using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
 
-namespace Sneakers.Shop.Backend.Infrastructure.Auth
+namespace Sneakers.Shop.Backend.Infrastructure.Seeders
 {
     public class UserSeeder(
         UserManager<ApplicationUser> userManager,

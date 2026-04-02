@@ -5,7 +5,7 @@ using Sneakers.Shop.Backend.Api.Middleware;
 using Sneakers.Shop.Backend.Application.Auth.Validations;
 using Sneakers.Shop.Backend.Application.Injection;
 using Sneakers.Shop.Backend.Infrastructure;
-using Sneakers.Shop.Backend.Infrastructure.Auth;
+using Sneakers.Shop.Backend.Infrastructure.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
