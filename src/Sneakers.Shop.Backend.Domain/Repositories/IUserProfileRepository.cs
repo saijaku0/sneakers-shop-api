@@ -6,6 +6,7 @@ namespace Sneakers.Shop.Backend.Domain.Repositories
     {
         Task<UserProfile?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<UserProfile?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+        Task<bool> IsUserFlaggedAsync(Guid userId, CancellationToken cancellationToken = default);
         Task AddAsync(UserProfile userProfile, CancellationToken cancellationToken = default);
         void Update(UserProfile userProfile);
     }

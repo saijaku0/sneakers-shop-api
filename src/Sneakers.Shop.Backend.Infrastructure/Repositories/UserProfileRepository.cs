@@ -16,6 +16,13 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
                 .Include(u => u.ModerationLogs)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
+        public async Task<bool> IsUserFlaggedAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.UserProfiles
+                .Where(u => u.Id == userId)
+                .Select(u => u.IsFlagged)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
         public async Task<UserProfile?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
             return await _dbContext.UserProfiles
