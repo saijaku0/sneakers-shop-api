@@ -6,9 +6,17 @@ body:
   type: json
   content: "{\r
 
-    \    \"email\": \"test1234@test.com\",\r
+    \    \"name\": \"John\",\r
 
-    \    \"password\": \"Test11223344@\"\r
+    \    \"lastname\": \"Doe\",\r
+
+    \    \"phoneNumber\": \"+491234567890\",\r
+
+    \    \"email\": \"newuser@test.com\",\r
+
+    \    \"password\": \"Test1234!\",\r
+
+    \    \"defaultShippingAddress\": null\r
 
     }"
 scripts:
