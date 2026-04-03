@@ -6,11 +6,11 @@ body:
   type: json
   content: "{\r
 
-    \  \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
+    \  \"brandId\": \"45e4b3f0-d488-4dba-912a-253a933eac63\",\r
 
-    \  \"targetAudience\": 1,\r
+    \  \"targetAudience\": 2,\r
 
-    \  \"productName\": \"Nike Air Max 2024\",\r
+    \  \"productName\": \"Nike Air Max 2022\",\r
 
     \  \"model\": \"DX1234-001\",\r
 

@@ -15,23 +15,37 @@ namespace Sneakers.Shop.Backend.Infrastructure.Seeders
         private readonly IIdentityService _identityService = identityService;
         public async Task SeedAsync()
         {
+            await CreateDropperIfNotExists(
+                email: "dropper@test.com",
+                name: "Seller",
+                lastName: "Shop");
 
-            if (await _userManager.FindByEmailAsync("dropper@test.com") != null)
+            await CreateDropperIfNotExists(
+                email: "dropper2@test.com",
+                name: "Seller2",
+                lastName: "Shop");
+        }
+
+        private async Task CreateDropperIfNotExists(string email, string name, string lastName)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
                 return;
 
             await _identityService.CreateUser(
                 new RegisterRequest(
-                    Name: "Seller",
-                    Lastname: "Shop",
+                    Name: name,
+                    Lastname: lastName,
                     PhoneNumber: "+491606143030",
-                    Email: "dropper@test.com",
+                    Email: email,
                     Password: "Dropper1234!",
                     DefaultShippingAddress: null
-                ), CancellationToken.None
-            );
+                ),
+                CancellationToken.None);
 
-            var createdUser = await _userManager.FindByEmailAsync("dropper@test.com")
-                ?? throw new Exception("User not found after creation.");
+            var createdUser = await _userManager.FindByEmailAsync(email)
+                ?? throw new Exception($"User {email} not found after creation.");
+
             await _userManager.AddToRoleAsync(createdUser, nameof(UserRole.Dropper));
         }
     }
