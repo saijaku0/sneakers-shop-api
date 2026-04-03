@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
+using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Common.Interfaces;
-using Sneakers.Shop.Backend.Application.DTOs;
-using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Events;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
@@ -19,7 +18,17 @@ namespace Sneakers.Shop.Backend.Infrastructure.Auth
         private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
         private readonly IDomainEventPublisher _domainEvent = domainEvent;
 
-        
+        /// <summary>
+        /// Creates a new user account with the specified registration details.
+        /// </summary>
+        /// <remarks>Publishes a domain event after successful user creation. The method is asynchronous
+        /// and should be awaited.</remarks>
+        /// <param name="req">The registration request containing user information such as email, password, phone number, and other
+        /// profile data. Cannot be null.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>A <see cref="Guid"/> representing the unique identifier of the newly created user.</returns>
+        /// <exception cref="InvalidOperationException">Thrown if the user could not be created due to validation errors or other issues during the creation
+        /// process.</exception>
         public async Task<Guid> CreateUser(RegisterRequest req, CancellationToken ct = default)
         {
             var user = new ApplicationUser

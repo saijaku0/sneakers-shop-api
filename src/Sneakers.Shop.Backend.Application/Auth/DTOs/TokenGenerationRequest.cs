@@ -1,6 +1,6 @@
 ﻿using Sneakers.Shop.Backend.Domain.Enums;
 
-namespace Sneakers.Shop.Backend.Application.DTOs
+namespace Sneakers.Shop.Backend.Application.Auth.DTOs
 {
     /// <summary>
     /// Represents a request to generate an authentication token for a user, including user identification, email, and

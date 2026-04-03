@@ -1,8 +1,7 @@
 ﻿using Sneakers.Shop.Backend.Application.Auth.DTOs;
-using Sneakers.Shop.Backend.Application.DTOs;
 using Sneakers.Shop.Backend.Domain.Enums;
 
-namespace Sneakers.Shop.Backend.Application.Interfaces
+namespace Sneakers.Shop.Backend.Application.Auth.Interfaces
 {
     public interface IIdentityService
     {

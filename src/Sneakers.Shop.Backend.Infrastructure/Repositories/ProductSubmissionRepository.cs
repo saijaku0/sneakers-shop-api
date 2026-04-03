@@ -15,6 +15,13 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
             await _dbContext.ProductSubmissions.AddAsync(productSubmission, ct);
         }
 
+        public async Task<int> GetTotalCountByDropperIdAsync(Guid dropperId, CancellationToken ct = default)
+        {
+            return await _dbContext.ProductSubmissions
+                .AsNoTracking()
+                .CountAsync(d => d.DropId == dropperId, ct);
+        }
+
         public void Delete(ProductSubmission productSubmission)
         {
             _dbContext.ProductSubmissions.Remove(productSubmission);
@@ -28,6 +35,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
         {
             var list = await _dbContext.ProductSubmissions
                 .AsNoTracking()
+                .Include(p => p.SneakersBrand)
                 .Where(d => d.DropId == dropperId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)

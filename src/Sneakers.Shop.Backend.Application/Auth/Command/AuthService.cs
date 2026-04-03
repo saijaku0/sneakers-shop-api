@@ -1,6 +1,5 @@
 ﻿using Sneakers.Shop.Backend.Application.Auth.DTOs;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
-using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Entities;

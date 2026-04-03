@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using Sneakers.Shop.Backend.Application.Auth.Command;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Common.Interfaces;
-using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
 using Sneakers.Shop.Backend.Infrastructure.Events;

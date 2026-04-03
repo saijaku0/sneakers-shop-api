@@ -1,42 +1,15 @@
 $kind: http-request
-name: CreateSubmission
-url: "{{baseUrl}}/api/v1/submissions"
-method: POST
-body:
-  type: json
-  content: "{\r
-
-    \  \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
-
-    \  \"targetAudience\": 2,\r
-
-    \  \"productName\": \"Nike Air Max 2022\",\r
-
-    \  \"model\": \"DX1234-001\",\r
-
-    \  \"description\": \"Free effect and adaptive Air Max.\",\r
-
-    \  \"basePrice\": 159.99\r
-
-    }"
+name: GetMySubmissions
+url: "{{baseUrl}}/api/v1/submissions/my-submissions?page=1&pageSize=10"
+method: GET
+queryParams:
+  page: "1"
+  pageSize: "10"
 auth:
   type: bearer
   credentials:
     token: "{{accessToken}}"
 scripts:
-  - type: afterResponse
-    code: "pm.test(\"Status is 200\", () => {\r
-
-      \    pm.response.to.have.status(200);\r
-
-      });\r
-
-      \r
-
-      const response = pm.response.json();\r
-
-      pm.environment.set(\"submissionId\", response);"
-    language: text/javascript
   - type: beforeRequest
     code: "const loginResponse = await pm.sendRequest({\r
 
@@ -52,7 +25,7 @@ scripts:
 
       \        raw: JSON.stringify({\r
 
-      \            email: \"dropper@test.com\",\r
+      \            email: \"dropper2@test.com\",\r
 
       \            password: \"Dropper1234!\"\r
 
@@ -70,4 +43,4 @@ scripts:
 
       pm.environment.set(\"refreshToken\", response.refreshToken);"
     language: text/javascript
-order: 1775128396706
+order: 3118261251165055

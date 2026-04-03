@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Sneakers.Shop.Backend.Application.Submissions.Commands;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Validations
 {
