@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Sneakers.Shop.Backend.Application.DTOs;
-using Sneakers.Shop.Backend.Application.Interfaces;
+using Sneakers.Shop.Backend.Application.Auth.DTOs;
+using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

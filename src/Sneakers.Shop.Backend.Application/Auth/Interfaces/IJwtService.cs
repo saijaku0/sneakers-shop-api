@@ -1,7 +1,7 @@
-﻿using Sneakers.Shop.Backend.Application.DTOs;
+﻿using Sneakers.Shop.Backend.Application.Auth.DTOs;
 using System.Security.Claims;
 
-namespace Sneakers.Shop.Backend.Application.Interfaces
+namespace Sneakers.Shop.Backend.Application.Auth.Interfaces
 {
     public interface IJwtService
     {
