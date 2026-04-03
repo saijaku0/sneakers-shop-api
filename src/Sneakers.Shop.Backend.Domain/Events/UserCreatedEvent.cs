@@ -8,5 +8,5 @@ namespace Sneakers.Shop.Backend.Domain.Events
         string Lastname,
         string PhoneNumber,
         string Email,
-        Address? DefaultShippingAddress);
+        Address? DefaultShippingAddress) : IDomainEvent;
 }
