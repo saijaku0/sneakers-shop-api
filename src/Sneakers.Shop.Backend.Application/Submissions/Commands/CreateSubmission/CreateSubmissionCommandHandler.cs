@@ -2,7 +2,7 @@
 using Sneakers.Shop.Backend.Domain.Entities;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
-namespace Sneakers.Shop.Backend.Application.Submissions.Commands
+namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission
 {
     public class CreateSubmissionCommandHandler(
         IUserProfileRepository userProfileRepository,

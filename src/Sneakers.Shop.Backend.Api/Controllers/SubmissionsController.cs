@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sneakers.Shop.Backend.Application.Submissions.Commands;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Domain.Enums;
 using System.Security.Claims;
 

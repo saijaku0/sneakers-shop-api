@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Domain.Enums;
 
-namespace Sneakers.Shop.Backend.Application.Submissions.Commands
+namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission
 {
     public record CreateSubmissionCommand(
         Guid DropId,
