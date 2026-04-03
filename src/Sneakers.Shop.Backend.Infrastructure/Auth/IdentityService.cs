@@ -1,26 +1,25 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
+using Sneakers.Shop.Backend.Application.Common.Interfaces;
 using Sneakers.Shop.Backend.Application.DTOs;
 using Sneakers.Shop.Backend.Application.Interfaces;
 using Sneakers.Shop.Backend.Domain.Enums;
+using Sneakers.Shop.Backend.Domain.Events;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
 
 namespace Sneakers.Shop.Backend.Infrastructure.Auth
 {
     public class IdentityService(
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager) : IIdentityService
+        RoleManager<IdentityRole<Guid>> roleManager,
+        IDomainEventPublisher domainEvent) : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager = roleManager;
+        private readonly IDomainEventPublisher _domainEvent = domainEvent;
 
-        /// <summary>
-        /// Creates a new user account with the specified registration details.
-        /// </summary>
-        /// <param name="req">The registration information for the new user, including email and password. Cannot be null.</param>
-        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
-        /// <returns>A <see cref="Guid"/> representing the unique identifier of the newly created user.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the user could not be created due to validation errors or other issues.</exception>
+        
         public async Task<Guid> CreateUser(RegisterRequest req, CancellationToken ct = default)
         {
             var user = new ApplicationUser
@@ -36,6 +35,15 @@ namespace Sneakers.Shop.Backend.Infrastructure.Auth
                 var errors = string.Join(", ", createdUser.Errors.Select(e => e.Description));
                 throw new InvalidOperationException($"Cannot create user: {errors}");
             }
+
+            await _domainEvent.PublishAsync(new UserCreatedEvent(
+                user.Id,
+                req.Name,
+                req.Lastname,
+                req.PhoneNumber,
+                req.Email,
+                req.DefaultShippingAddress
+            ), ct);
 
             return user.Id;
         }

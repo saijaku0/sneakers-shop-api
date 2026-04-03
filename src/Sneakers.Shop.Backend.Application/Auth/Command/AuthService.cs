@@ -8,13 +8,11 @@ using Sneakers.Shop.Backend.Domain.Entities;
 namespace Sneakers.Shop.Backend.Application.Auth.Command
 {
     public class AuthService(
-        IUserProfileRepository userProfileRepository,
         IIdentityService identity, 
         IJwtService jwtService, 
         IRefreshTokenRepository refreshToken,
         IUnitOfWork unitOfWork) : IAuthService
     {
-        private readonly IUserProfileRepository _userProfileRepository = userProfileRepository;
         private readonly IIdentityService _identity = identity;
         private readonly IJwtService _jwtService = jwtService;
         private readonly IRefreshTokenRepository _refreshToken = refreshToken;
@@ -29,24 +27,8 @@ namespace Sneakers.Shop.Backend.Application.Auth.Command
                 throw new InvalidOperationException("User with this email already exist.");
 
             var userId = await _identity.CreateUser(request, ct);
-
             await _identity.AssignRole(userId, UserRole.Customer, ct);
 
-            var userProfile = new UserProfile
-            (
-                userId,
-                request.Name,
-                request.Lastname,
-                request.PhoneNumber,
-                request.Email
-            );
-
-            await _userProfileRepository.AddAsync(userProfile, ct);
-
-            if(request.DefaultShippingAddress != null)
-                userProfile.UpdateDefaultAddress(request.DefaultShippingAddress);
-
-            await _unitOfWork.SaveChangesAsync(ct);
             return await GenerateNewPairToken(userId, ct);
         }
 
