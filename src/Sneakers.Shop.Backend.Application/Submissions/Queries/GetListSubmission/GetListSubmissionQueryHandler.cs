@@ -6,7 +6,7 @@ using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission
 {
-    public class GetListSubmissionQueryHandler(
+    public class GetListSubmissionQuery(
         IProductSubmissionRepository productRepository) 
         : IRequestHandler<GetMySubmissionsQuery, GetSubmissionsResponse>
     {
@@ -15,6 +15,9 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmissio
             GetMySubmissionsQuery request, 
             CancellationToken cancellationToken)
         {
+            if (request.Page <= 0 || request.PageSize <= 0)
+                throw new DomainException("Page must be >= 1 and pageSize more than 0.");
+
             var submissions = await _productRepository.GetByDropperIdAsync(
                 request.DropId, 
                 request.Page, 
