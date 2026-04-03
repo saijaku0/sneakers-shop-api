@@ -52,6 +52,17 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             return Ok(submissionId);
         }
 
+        /// <summary>
+        /// Retrieves a paginated list of submissions created by the currently authenticated dropper user.
+        /// </summary>
+        /// <remarks>This endpoint is accessible only to users with the Dropper role. The results are
+        /// paginated based on the specified page and pageSize parameters.</remarks>
+        /// <param name="page">The zero-based index of the page of submissions to retrieve. Must be greater than or equal to 0.</param>
+        /// <param name="pageSize">The maximum number of submissions to include in the page. Must be a positive integer.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the paginated list of submissions for the current user with status
+        /// code 200 (OK) if successful; 401 (Unauthorized) if the user is not authenticated as a dropper; 404 (Not
+        /// Found) if no submissions are found; or 500 (Internal Server Error) if an unexpected error occurs.</returns>
         [HttpGet("my-submissions")]
         [Authorize(Roles = nameof(UserRole.Dropper))]
         [ProducesResponseType(StatusCodes.Status200OK)]
