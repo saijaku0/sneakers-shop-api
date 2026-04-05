@@ -18,6 +18,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmissio
             if (submission.DropId != request.DropId)
                 throw new DomainException("Submission does not belong to the specified drop.");
             submission.Cancel();
+            _submissionRepository.Update(submission);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
