@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
 using Sneakers.Shop.Backend.Domain.Enums;
@@ -81,6 +82,36 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             var query = new GetMySubmissionsQuery(parsedDropId, page, pageSize);
             var result = await _mediator.Send(query, ct);
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Deletes the submission with the specified identifier for the currently authenticated user.
+        /// </summary>
+        /// <remarks>This action is restricted to users with the Dropper role. The user must be
+        /// authenticated, and only their own submissions can be deleted.</remarks>
+        /// <param name="id">The unique identifier of the submission to delete.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>A 204 No Content response if the submission is successfully deleted; a 401 Unauthorized response if the user
+        /// is not authenticated; a 403 Forbidden response if the user does not have permission; a 404 Not Found
+        /// response if the submission does not exist; or an appropriate error response for other failure conditions.</returns>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> DeleteSubmission(
+            [FromRoute] Guid id,
+            CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized();
+            var command = new CancelSubmissionCommand(id, parsedUserId);
+            await _mediator.Send(command, ct);
+            return NoContent();
         }
     }
 }
