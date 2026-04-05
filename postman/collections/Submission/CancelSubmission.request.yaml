@@ -1,0 +1,97 @@
+$kind: http-request
+name: CancelSubmission
+url: "{{baseUrl}}/api/v1/submissions/{{submissionId}}"
+method: DELETE
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: beforeRequest
+    code: "const loginResponse = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"dropper@test.com\",\r
+
+      \            password: \"Dropper1234!\"\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      \r
+
+      const response = loginResponse.json();\r
+
+      pm.environment.set(\"accessToken\", response.accessToken);\r
+
+      pm.environment.set(\"refreshToken\", response.refreshToken);\r
+
+      \r
+
+      const createSubmission = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/submissions\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: {\r
+
+      \        \"Authorization\": \"Bearer \" +
+      pm.environment.get(\"accessToken\"),\r
+
+      \        \"Content-Type\": \"application/json\"\r
+
+      \    },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
+
+      \            \"targetAudience\": 2,\r
+
+      \            \"productName\": \"Nike Air Max 2022\",\r
+
+      \            \"model\": \"DX1234-001\",\r
+
+      \            \"description\": \"Free effect and adaptive Air Max.\",\r
+
+      \            \"basePrice\": 159.99\r
+
+      \        })\r
+
+      \    }\r
+
+      })\r
+
+      \r
+
+      const responseCreateSubmission = createSubmission.json();\r
+
+      pm.environment.set(\"submissionId\", responseCreateSubmission);"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status is 204\", () => {\r
+
+      \    pm.response.to.have.status(204);\r
+
+      });"
+    language: text/javascript
+order: 4406931361840072
