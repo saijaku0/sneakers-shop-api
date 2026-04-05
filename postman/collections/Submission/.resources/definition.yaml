@@ -1,2 +1,4 @@
 $kind: collection
 name: Submission
+variables:
+  submissionId: ""
