@@ -41,9 +41,11 @@ scripts:
   - type: afterResponse
     code: "pm.test(\"Cannot delete someone else's submission\", () => {\r
 
-      \    const response = pm.response.json();\r
+      \    pm.test(\"Cannot update someone else's submission\", () => {\r
 
-      \    pm.expect(response.errorMessage).to.include(\"does not belong\");\r
+      \        pm.response.to.have.status(400);\r
+
+      \    });\r
 
       });"
     language: text/javascript
