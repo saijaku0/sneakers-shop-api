@@ -41,11 +41,7 @@ scripts:
   - type: afterResponse
     code: "pm.test(\"Cannot delete someone else's submission\", () => {\r
 
-      \    pm.test(\"Cannot update someone else's submission\", () => {\r
-
-      \        pm.response.to.have.status(400);\r
-
-      \    });\r
+      \    pm.response.to.have.status(400);\r
 
       });"
     language: text/javascript
