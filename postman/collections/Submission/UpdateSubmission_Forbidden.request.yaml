@@ -1,11 +1,28 @@
 $kind: http-request
-name: DeleteSubmission_Forbidden
+name: UpdateSubmission_Forbidden
 url: "{{baseUrl}}/api/v1/submissions/{{submissionId}}"
-method: DELETE
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
+
+    \    \"targetAudience\": 2,\r
+
+    \    \"productName\": \"Nike Air Max 2025 Updated\",\r
+
+    \    \"model\": \"DX1234-002\",\r
+
+    \    \"description\": \"Updated description for Air Max.\",\r
+
+    \    \"basePrice\": 79.99\r
+
+    }"
 auth:
-  type: bearer
   credentials:
     token: "{{accessToken}}"
+  type: bearer
 scripts:
   - type: beforeRequest
     code: "const loginResponse = await pm.sendRequest({\r
@@ -32,17 +49,15 @@ scripts:
 
       });\r
 
-      \r
-
       const response = loginResponse.json();\r
 
       pm.environment.set(\"accessToken\", response.accessToken);"
     language: text/javascript
   - type: afterResponse
-    code: "pm.test(\"Cannot delete someone else's submission\", () => {\r
+    code: "pm.test(\"Cannot update someone else's submission\", () => {\r
 
       \    pm.response.to.have.status(400);\r
 
       });"
     language: text/javascript
-order: 4413779095264323
+order: 3224128135014878

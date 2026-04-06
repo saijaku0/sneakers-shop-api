@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
+using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
 using Sneakers.Shop.Backend.Domain.Enums;
 using System.Security.Claims;
@@ -71,7 +73,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetMySubmissions(
-            [FromQuery] int page, 
+            [FromQuery] int page,
             [FromQuery] int pageSize,
             CancellationToken ct)
         {
@@ -110,6 +112,46 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             if (!Guid.TryParse(userId, out var parsedUserId))
                 return Unauthorized();
             var command = new CancelSubmissionCommand(id, parsedUserId);
+            await _mediator.Send(command, ct);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Updates an existing submission with the specified data.
+        /// </summary>
+        /// <remarks>Requires the caller to be authorized with the Dropper role. Returns 404 Not Found if
+        /// the submission does not exist, 400 Bad Request for invalid input, 401 Unauthorized if the user is not
+        /// authenticated, 403 Forbidden if the user does not have permission, and 422 Unprocessable Entity for
+        /// validation errors.</remarks>
+        /// <param name="id">The unique identifier of the submission to update.</param>
+        /// <param name="request">The request object containing the updated submission data. Cannot be null.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>A result indicating the outcome of the update operation. Returns 204 No Content if the update is successful;
+        /// otherwise, returns an appropriate error response.</returns>
+        [HttpPut("{id}")]
+        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateSubmission(
+            [FromRoute] Guid id,
+            [FromBody] UpdateSubmissionRequest request,
+            CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized();
+
+            var command = new UpdateSubmissionCommand(
+                DropId: parsedUserId,
+                SubmissionId: id,
+                request
+            );
+
             await _mediator.Send(command, ct);
             return NoContent();
         }

@@ -87,7 +87,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             RejectionReason = reason.Trim();
         }
 
-        public void UpdateDetails(string productName, string model, string description, decimal basePrice)
+        public void UpdateDetails(
+            Audience targetAudience,
+            Guid brandId,
+            string productName, 
+            string model, 
+            string description, 
+            decimal basePrice)
         {
             if (Status != ProductSubmissionStatus.Pending)
                 throw new DomainException($"Cannot update submission in status '{Status}'. Only 'Pending' allowed.");
@@ -100,7 +106,11 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException("Description cannot be empty.", nameof(description));
             if (basePrice < 0)
                 throw new DomainException("Base price cannot be negative.", nameof(basePrice));
+            if (brandId == Guid.Empty)
+                throw new DomainException("BrandId cannot be empty.", nameof(brandId));
 
+            TargetAudience = targetAudience;
+            BrandId = brandId;
             ProductName = productName.Trim();
             Model = model.Trim();
             Description = description.Trim();
