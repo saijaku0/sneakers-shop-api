@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 
-namespace Sneakers.Shop.Backend.Application.Submissions.Validations
+namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission
 {
     public class CreateSubmissionValidation 
         : AbstractValidator<CreateSubmissionCommand>
