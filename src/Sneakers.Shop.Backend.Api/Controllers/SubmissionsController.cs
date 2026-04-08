@@ -7,6 +7,7 @@ using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
+using Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById;
 using Sneakers.Shop.Backend.Domain.Enums;
 using System.Security.Claims;
 
@@ -154,6 +155,46 @@ namespace Sneakers.Shop.Backend.Api.Controllers
 
             await _mediator.Send(command, ct);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Returns data for the current user's submission, identified as a Dropper, by the specified submission ID.
+        /// </summary>
+        /// <remarks>
+        /// Access to this method is restricted to users with the Dropper role.
+        /// Returns 401 (Unauthorized) if the user is not authenticated,
+        /// and 403 (Forbidden) if the user does not have the required permissions.
+        /// </remarks>
+        /// <param name="submissionId">The unique identifier of the submission to retrieve.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>
+        /// An IActionResult containing the submission data with status code 200 (OK) if found;
+        /// 404 (NotFound) if the submission is not found;
+        /// or an appropriate error status code in other cases.
+        /// </returns>
+        [HttpGet("my-submission")]
+        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status501NotImplemented)]
+        [ProducesResponseType(StatusCodes.Status502BadGateway)]
+        public async Task<IActionResult> GetMySubmission(
+            [FromQuery] Guid submissionId,
+            CancellationToken ct)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userId, out var parsedUserId))
+                return Unauthorized();
+            var query = new GetSubmissionByIdQuery(parsedUserId, submissionId);
+            var result = await _mediator.Send(query, ct);
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
         }
     }
 }
