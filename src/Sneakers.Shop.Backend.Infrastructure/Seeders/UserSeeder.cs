@@ -24,6 +24,37 @@ namespace Sneakers.Shop.Backend.Infrastructure.Seeders
                 email: "dropper2@test.com",
                 name: "Seller2",
                 lastName: "Shop");
+
+            await CreateModeratorIfNotExists(
+                email: "moderator@test.com",
+                name: "Moderator",
+                lastName: "User");
+
+        }
+
+        private async Task CreateModeratorIfNotExists(string email, string name, string lastName)
+        {
+            var existingUser = await _userManager.FindByEmailAsync(email);
+            if (existingUser != null)
+                return;
+
+
+            await _identityService.CreateUser(
+                new RegisterRequest(
+                    Name: name,
+                    Lastname: lastName,
+                    PhoneNumber: "+491606143030",
+                    Email: email,
+                    Password: "Moderator1234!",
+                    DefaultShippingAddress: null
+                ),
+                CancellationToken.None);
+
+            var createdUser = await _userManager.FindByEmailAsync(email)
+                ?? throw new Exception($"User {email} not found after creation.");
+
+            await _userManager.ConfirmEmailAsync(createdUser, await _userManager.GenerateEmailConfirmationTokenAsync(createdUser));
+            await _userManager.AddToRoleAsync(createdUser, nameof(UserRole.Moderator));
         }
 
         private async Task CreateDropperIfNotExists(string email, string name, string lastName)

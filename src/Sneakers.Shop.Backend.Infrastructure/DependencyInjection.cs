@@ -53,6 +53,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
 
             service.AddScoped<RoleSeeder>();
             service.AddScoped<IAuthorizationHandler, ActiveDropperHandler>();
+            service.AddScoped<IAuthorizationHandler, ActiveModeratorHandler>();
 
             service.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {

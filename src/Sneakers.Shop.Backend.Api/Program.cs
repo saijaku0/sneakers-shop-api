@@ -32,6 +32,9 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ActiveDropper", policy =>
         policy.AddRequirements(new ActiveDropperRequirement()));
+
+    options.AddPolicy("ActiveModerator", policy =>
+        policy.AddRequirements(new ActiveModeratorRequirement()));
 });
 
 if (builder.Environment.IsDevelopment())
