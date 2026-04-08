@@ -4,6 +4,7 @@ using Sneakers.Shop.Backend.Api.Middleware;
 using Sneakers.Shop.Backend.Application.Auth.Validations;
 using Sneakers.Shop.Backend.Application.Injection;
 using Sneakers.Shop.Backend.Infrastructure;
+using Sneakers.Shop.Backend.Infrastructure.Auth.Requirments;
 using Sneakers.Shop.Backend.Infrastructure.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,12 @@ builder.Services.AddOpenApi(options =>
         document.Info.Version = "v1";
         return Task.CompletedTask;
     });
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ActiveDropper", policy =>
+        policy.AddRequirements(new ActiveDropperRequirement()));
 });
 
 if (builder.Environment.IsDevelopment())
