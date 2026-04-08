@@ -8,5 +8,6 @@ namespace Sneakers.Shop.Backend.Application.Submissions.DTOs
         string ProductName,
         string Model,
         string Description,
-        decimal BasePrice);
+        decimal BasePrice,
+        IReadOnlyCollection<SubmissionSizeDto> SubmissionSizes);
 }

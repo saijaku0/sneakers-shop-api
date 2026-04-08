@@ -1,15 +1,19 @@
 ﻿using MediatR;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
+using Sneakers.Shop.Backend.Domain.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission
 {
     public class UpdateSubmissionCommandHandler(
         IProductSubmissionRepository submissionRepository,
+        ISizeConversionService sizeConversionService,
         IUnitOfWork unitOfWork)
         : IRequestHandler<UpdateSubmissionCommand, Unit>
     {
         private readonly IProductSubmissionRepository _submissionRepository = submissionRepository;
+        private readonly ISizeConversionService _sizeConversionService = sizeConversionService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         public async Task<Unit> Handle(
@@ -30,6 +34,19 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmissio
                 request.Payload.Model,
                 request.Payload.Description,
                 request.Payload.BasePrice);
+
+            submission.SetSizeList(
+                request.Payload.SubmissionSizes.Select(s =>
+                {
+                    var sizeInCm = _sizeConversionService.GetEquivalentSize(
+                        s.SizeValue,
+                        s.MeasureType,
+                        MeasureSizes.CM,
+                        request.Payload.TargetAudience
+                    );
+                    return (s.Quantity, sizeInCm);
+                })
+            );
 
             _submissionRepository.Update(submission);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

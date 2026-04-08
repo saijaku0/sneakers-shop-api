@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Sneakers.Shop.Backend.Application.Auth.Command;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Common.Interfaces;
+using Sneakers.Shop.Backend.Domain.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
+using Sneakers.Shop.Backend.Domain.Services;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
 using Sneakers.Shop.Backend.Infrastructure.Events;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
@@ -45,6 +47,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<IAuthService, AuthService>();
             
             service.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+            service.AddScoped<ISizeConversionService, SizeConversionService>();
 
             service.AddScoped<RoleSeeder>();
             service.AddAuthorization();

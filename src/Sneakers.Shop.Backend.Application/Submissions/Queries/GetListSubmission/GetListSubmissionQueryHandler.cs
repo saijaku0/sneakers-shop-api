@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.Response;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
@@ -36,7 +37,12 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmissio
                 Price: s.BasePrice,
                 Status: s.Status.ToString(),
                 CreatedAt: s.CreatedAt,
-                RejectionReason: s.RejectionReason
+                RejectionReason: s.RejectionReason,
+                SubmissionSizes: [.. s.SubmissionSizes.Select(size => new SubmissionSizeDto(
+                    size.Quantity,
+                    size.SizeInCm,
+                    MeasureSizes.CM
+                ))]
             )).ToList();
 
             return new GetSubmissionsResponse(submissionsDtos, getTotalCount);

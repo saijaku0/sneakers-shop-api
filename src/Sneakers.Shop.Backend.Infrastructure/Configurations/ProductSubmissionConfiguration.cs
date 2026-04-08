@@ -25,6 +25,15 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .IsRequired()
                 .HasMaxLength(200);
 
+            builder.OwnsMany(x => x.SubmissionSizes, sb =>
+            {
+                sb.Property(x => x.Quantity)
+                    .IsRequired();
+                sb.Property(x => x.SizeInCm)
+                    .IsRequired()
+                    .HasColumnType(DecimalPrecision);
+            });
+
             builder.Property(x => x.Model)
                 .IsRequired()
                 .HasMaxLength(100);

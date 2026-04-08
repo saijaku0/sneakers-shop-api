@@ -18,5 +18,6 @@
     decimal Price,
     string Status,
     DateTimeOffset CreatedAt,
-    string? RejectionReason);
+    string? RejectionReason,
+    IReadOnlyCollection<SubmissionSizeDto> SubmissionSizes);
 }

@@ -54,6 +54,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
         {
             return await _dbContext.ProductSubmissions
                 .Include(p => p.SneakersBrand)
+                .Include(p => p.SubmissionSizes)
                 .FirstOrDefaultAsync(p => p.Id == id, ct);
         }
 

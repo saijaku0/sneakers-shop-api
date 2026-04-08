@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
+using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
@@ -28,7 +29,12 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionByI
                 Price: submission.BasePrice,
                 Status: submission.Status.ToString(),
                 CreatedAt: submission.CreatedAt,
-                RejectionReason: submission.RejectionReason
+                RejectionReason: submission.RejectionReason,
+                SubmissionSizes: [.. submission.SubmissionSizes.Select(size => new SubmissionSizeDto(
+                    size.Quantity,
+                    size.SizeInCm,
+                    MeasureSizes.CM
+                ))]
             );
         }
     }
