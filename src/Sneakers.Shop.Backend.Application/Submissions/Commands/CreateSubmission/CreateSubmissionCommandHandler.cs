@@ -27,10 +27,6 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmissio
             var brand = await _brandRepository.GetByIdAsync(request.BrandId, cancellationToken)
                 ?? throw new ArgumentException($"Brand with ID {request.BrandId} does not exist.");
 
-            var isUserFlagged = await _userProfileRepository.IsUserFlaggedAsync(request.DropId, cancellationToken);
-            if (isUserFlagged)
-                throw new ArgumentException($"User profile for brand owner with ID {request.DropId} is flagged.");
-
             var size = request.SubmissionSizes.Select(s => {
                 var sizeInCm = _sizeConversion.GetEquivalentSize(
                     s.SizeValue,

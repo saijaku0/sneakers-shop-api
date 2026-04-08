@@ -1,14 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById;
-using Sneakers.Shop.Backend.Domain.Enums;
 using System.Security.Claims;
 
 namespace Sneakers.Shop.Backend.Api.Controllers
@@ -39,7 +37,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// <returns>An IActionResult containing the identifier of the created submission if successful; otherwise, an
         /// appropriate error response.</returns>
         [HttpPost]
-        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [Authorize(Policy = "ActiveDropper")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -68,7 +66,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// code 200 (OK) if successful; 401 (Unauthorized) if the user is not authenticated as a dropper; 404 (Not
         /// Found) if no submissions are found; or 500 (Internal Server Error) if an unexpected error occurs.</returns>
         [HttpGet("my-submissions")]
-        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [Authorize(Policy = "ActiveDropper")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -98,7 +96,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// is not authenticated; a 403 Forbidden response if the user does not have permission; a 404 Not Found
         /// response if the submission does not exist; or an appropriate error response for other failure conditions.</returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [Authorize(Policy = "ActiveDropper")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -130,7 +128,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// <returns>A result indicating the outcome of the update operation. Returns 204 No Content if the update is successful;
         /// otherwise, returns an appropriate error response.</returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [Authorize(Policy = "ActiveDropper")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -173,7 +171,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
         /// or an appropriate error status code in other cases.
         /// </returns>
         [HttpGet("my-submission")]
-        [Authorize(Roles = nameof(UserRole.Dropper))]
+        [Authorize(Policy = "ActiveDropper")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

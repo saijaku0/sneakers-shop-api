@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using Sneakers.Shop.Backend.Domain.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Domain.Services;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
+using Sneakers.Shop.Backend.Infrastructure.Auth.Handlers;
 using Sneakers.Shop.Backend.Infrastructure.Events;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
@@ -50,7 +52,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<ISizeConversionService, SizeConversionService>();
 
             service.AddScoped<RoleSeeder>();
-            service.AddAuthorization();
+            service.AddScoped<IAuthorizationHandler, ActiveDropperHandler>();
 
             service.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
