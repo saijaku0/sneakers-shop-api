@@ -65,7 +65,7 @@ scripts:
 
       \            \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
 
-      \            \"targetAudience\": 2,\r
+      \            \"targetAudience\": 0,\r
 
       \            \"productName\": \"Nike Air Max 2022\",\r
 
@@ -73,7 +73,31 @@ scripts:
 
       \            \"description\": \"Free effect and adaptive Air Max.\",\r
 
-      \            \"basePrice\": 159.99\r
+      \            \"basePrice\": 159.99,\r
+
+      \            \"submissionSizes\": [\r
+
+      \                {\r
+
+      \                \"quantity\": 10,\r
+
+      \                \"sizeValue\": 42.5,\r
+
+      \                \"measureType\": 2\r
+
+      \                },\r
+
+      \                {\r
+
+      \                \"quantity\": 5,\r
+
+      \                \"sizeValue\": 44.0,\r
+
+      \                \"measureType\": 2\r
+
+      \                }\r
+
+      \            ]\r
 
       \        })\r
 

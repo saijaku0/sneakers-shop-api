@@ -8,7 +8,7 @@ body:
 
     \    \"brandId\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
 
-    \    \"targetAudience\": 2,\r
+    \    \"targetAudience\": 0,\r
 
     \    \"productName\": \"Nike Air Max 2025 Updated\",\r
 
@@ -16,7 +16,31 @@ body:
 
     \    \"description\": \"Updated description for Air Max.\",\r
 
-    \    \"basePrice\": 79.99\r
+    \    \"basePrice\": 79.99,\r
+
+    \    \"submissionSizes\": [\r
+
+    \    {\r
+
+    \      \"quantity\": 7,\r
+
+    \      \"sizeValue\": 42.5,\r
+
+    \      \"measureType\": 2\r
+
+    \    },\r
+
+    \    {\r
+
+    \      \"quantity\": 3,\r
+
+    \      \"sizeValue\": 44.0,\r
+
+    \      \"measureType\": 2\r
+
+    \    }\r
+
+    \  ]\r
 
     }"
 auth:
