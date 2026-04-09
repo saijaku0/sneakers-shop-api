@@ -64,6 +64,10 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .HasForeignKey(x => x.DropId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(x => x.Dropper)
+                .WithMany()
+                .HasForeignKey(x => x.DropId);
+
             builder.HasOne<ApplicationUser>()
                 .WithMany()
                 .HasForeignKey(x => x.ModeratorId)

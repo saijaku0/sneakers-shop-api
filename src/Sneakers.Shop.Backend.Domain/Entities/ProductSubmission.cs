@@ -9,6 +9,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
     {
         private readonly List<SubmissionSize> _submissionSizes = [];
         public Guid DropId { get; private set; }
+        public UserProfile? Dropper { get; private set; }
         public Guid BrandId { get; private set; }
         public Brand? SneakersBrand { get; private set; }
         public Audience TargetAudience { get; private set; }
