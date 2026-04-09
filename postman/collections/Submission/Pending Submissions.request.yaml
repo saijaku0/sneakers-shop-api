@@ -1,0 +1,85 @@
+$kind: http-request
+name: Pending Submissions
+url: "{{baseUrl}}/api/v1/submissions/pending?page=1&pageSize=10"
+method: GET
+queryParams:
+  page: "1"
+  pageSize: "10"
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response has submissions array\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.have.property(\"submissions\");\r
+
+      \    pm.expect(json.submissions).to.be.an(\"array\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response has totalCount\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    pm.expect(json).to.have.property(\"totalCount\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"All submissions have Pending status\", function () {\r
+
+      \    const json = pm.response.json();\r
+
+      \    json.submissions.forEach(s => {\r
+
+      \        pm.expect(s.status).to.equal(\"Pending\");\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+  - type: beforeRequest
+    code: "const loginResponse = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"moderator@test.com\",\r
+
+      \            password: \"Moderator1234!\"\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      const response = loginResponse.json();\r
+
+      pm.environment.set(\"accessToken\", response.accessToken);"
+    language: text/javascript
+order: 4470546582773947
