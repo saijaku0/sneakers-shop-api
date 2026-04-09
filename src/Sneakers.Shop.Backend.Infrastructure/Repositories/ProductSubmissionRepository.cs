@@ -44,6 +44,25 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
             return list;
         }
 
+        public async Task<IReadOnlyList<ProductSubmission>> GetPendingAsync(
+            int page, int pageSize, CancellationToken ct)
+        {
+            return await _dbContext.ProductSubmissions
+                .Include(s => s.SneakersBrand)
+                .Include(s => s.Dropper)
+                .Where(s => s.Status == ProductSubmissionStatus.Pending)
+                .OrderBy(s => s.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(ct);
+        }
+
+        public async Task<int> GetTotalPendingCountAsync(CancellationToken ct)
+        {
+            return await _dbContext.ProductSubmissions
+                .CountAsync(s => s.Status == ProductSubmissionStatus.Pending, ct);
+        }
+
         public async Task<ProductSubmission?> GetByIdAsync(Guid id, CancellationToken ct = default)
         {
             return await _dbContext.ProductSubmissions

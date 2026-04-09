@@ -6,6 +6,7 @@ using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
+using Sneakers.Shop.Backend.Application.Submissions.Queries.GetPendingSubmissions;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById;
 using System.Security.Claims;
 
@@ -192,6 +193,48 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             if (result == null)
                 return NotFound();
 
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns a list of pending applications available to the current moderator, with support
+        /// for pagination.
+        /// </summary>
+        /// <remarks>
+        /// Access to this method is allowed only for active moderators. Use query parameters
+        /// to control pagination.
+        /// </remarks>
+        /// <param name="page">
+        /// The page number of the results. Must be greater than or equal to 1. Defaults to 1.
+        /// </param>
+        /// <param name="pageSize">
+        /// The number of applications per page. Must be greater than 0. Defaults to 10.
+        /// </param>
+        /// <param name="ct">
+        /// A cancellation token that can be used to cancel the asynchronous operation.
+        /// </param>
+        /// <returns>
+        /// An IActionResult object containing a page of pending applications. Returns status 200 (OK) with
+        /// results, 401 (Unauthorized) if the user is not authenticated, 403 (Forbidden) if the user
+        /// does not have moderator permissions, or 500 (Internal Server Error) in case of a server error.
+        /// </returns>
+        [HttpGet("pending")]
+        [Authorize(Policy = "ActiveModerator")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetPendingSubmissions(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken ct = default)
+        {
+            var moderatorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(moderatorId, out var parsedModeratorId))
+                return Unauthorized();
+
+            var query = new GetPendingSubmissionsQuery(parsedModeratorId, page, pageSize);
+            var result = await _mediator.Send(query, ct);
             return Ok(result);
         }
     }
