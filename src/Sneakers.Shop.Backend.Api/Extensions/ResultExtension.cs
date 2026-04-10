@@ -53,7 +53,7 @@ namespace Sneakers.Shop.Backend.Api.Extensions
         public static IActionResult ToActionResult(this Result result, ControllerBase controller)
         {
             if (result.IsSuccess)
-                return controller.Ok();
+                return controller.NoContent();
             return result.Error!.Code switch
             {
                 "NotFound" => controller.NotFound(result.Error.Message),
