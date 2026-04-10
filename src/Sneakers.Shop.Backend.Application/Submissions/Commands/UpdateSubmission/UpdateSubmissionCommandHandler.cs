@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sneakers.Shop.Backend.Application.Submissions.Helpers;
 using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
@@ -38,16 +39,12 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmissio
                 request.Payload.BasePrice);
 
             submission.SetSizeList(
-                request.Payload.SubmissionSizes.Select(s =>
-                {
-                    var sizeInCm = _sizeConversionService.GetEquivalentSize(
-                        s.SizeValue,
-                        s.MeasureType,
-                        MeasureSizes.CM,
-                        request.Payload.TargetAudience
-                    );
-                    return (s.Quantity, sizeInCm);
-                })
+                SubmissionSizeMapper
+                .MapSizes(
+                    request.Payload.SubmissionSizes,
+                    request.Payload.TargetAudience,
+                    _sizeConversionService
+                )
             );
 
             _submissionRepository.Update(submission);

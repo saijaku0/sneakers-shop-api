@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Sneakers.Shop.Backend.Application.Submissions.Helpers;
 using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Entities;
 using Sneakers.Shop.Backend.Domain.Enums;
@@ -26,15 +27,11 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmissio
             if (brand == null)
                 return Result<Guid>.Failure(Error.Conflict($"Brand with ID {request.BrandId} does not exist."));
 
-            var size = request.SubmissionSizes.Select(s => {
-                var sizeInCm = _sizeConversion.GetEquivalentSize(
-                    s.SizeValue,
-                    s.MeasureType,
-                    MeasureSizes.CM,
-                    request.TargetAudience
-                );
-                return (s.Quantity, sizeInCm);
-            }).ToList();
+            var sizes = SubmissionSizeMapper.MapSizes(
+                request.SubmissionSizes,
+                request.TargetAudience,
+                _sizeConversion
+            );
 
             var submission = new ProductSubmission
             (
@@ -45,7 +42,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmissio
                 request.Model,
                 request.Description,
                 request.BasePrice,
-                size
+                sizes
             );
             await _productRepository.AddAsync(submission, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
