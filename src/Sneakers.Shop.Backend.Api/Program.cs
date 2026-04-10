@@ -1,7 +1,6 @@
 using FluentValidation;
 using Scalar.AspNetCore;
 using Sneakers.Shop.Backend.Api.Middleware;
-using Sneakers.Shop.Backend.Application.Auth.Validations;
 using Sneakers.Shop.Backend.Application.Injection;
 using Sneakers.Shop.Backend.Infrastructure;
 using Sneakers.Shop.Backend.Infrastructure.Auth.Requirments;
@@ -13,7 +12,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
 builder.Services.AddProblemDetails();

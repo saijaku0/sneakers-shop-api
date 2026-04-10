@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Sneakers.Shop.Backend.Application.Auth.DTOs;
+using Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
@@ -40,7 +40,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Seeders
 
 
             await _identityService.CreateUser(
-                new RegisterRequest(
+                new RegisterCommand(
                     Name: name,
                     Lastname: lastName,
                     PhoneNumber: "+491606143030",
@@ -64,7 +64,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Seeders
                 return;
 
             await _identityService.CreateUser(
-                new RegisterRequest(
+                new RegisterCommand(
                     Name: name,
                     Lastname: lastName,
                     PhoneNumber: "+491606143030",

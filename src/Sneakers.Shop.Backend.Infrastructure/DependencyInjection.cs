@@ -46,7 +46,6 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<IJwtService, JwtService>();
             service.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             service.AddScoped<IIdentityService, IdentityService>();
-            service.AddScoped<IAuthService, AuthService>();
             
             service.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
             service.AddScoped<ISizeConversionService, SizeConversionService>();

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Common.Interfaces;
@@ -29,7 +30,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Auth
         /// <returns>A <see cref="Guid"/> representing the unique identifier of the newly created user.</returns>
         /// <exception cref="InvalidOperationException">Thrown if the user could not be created due to validation errors or other issues during the creation
         /// process.</exception>
-        public async Task<Guid> CreateUser(RegisterRequest req, CancellationToken ct = default)
+        public async Task<Guid> CreateUser(RegisterCommand req, CancellationToken ct = default)
         {
             var user = new ApplicationUser
             {
