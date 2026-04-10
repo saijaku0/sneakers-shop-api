@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
-using Sneakers.Shop.Backend.Application.Auth.DTOs;
 
-namespace Sneakers.Shop.Backend.Application.Auth.Validations
+namespace Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser
 {
-    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public class RegisterNewUserValidator : AbstractValidator<RegisterCommand>
     {
-        public RegisterRequestValidator()
+        public RegisterNewUserValidator()
         {
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
@@ -22,8 +21,8 @@ namespace Sneakers.Shop.Backend.Application.Auth.Validations
                 .WithMessage("Invalid phone number format. Use international format, e.g. +491234567890.");
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
-                .Matches(@"^(?=.*[A-Za-z])(?=.*\d).{6,}$")
+                .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
+                .Matches(@"^(?=.*[A-Za-z])(?=.*\d).{8,}$")
                 .WithMessage("Password must contain at least one letter and one number.");
         }
     }

@@ -1,63 +1,77 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Api.DTOs;
-using Sneakers.Shop.Backend.Api.Filters;
-using Sneakers.Shop.Backend.Application.Auth.DTOs;
-using Sneakers.Shop.Backend.Application.Auth.Interfaces;
+using Sneakers.Shop.Backend.Application.Auth.Command.Login;
+using Sneakers.Shop.Backend.Application.Auth.Command.RefreshToken;
+using Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser;
 
 namespace Sneakers.Shop.Backend.Api.Controllers
 {
     /// <summary>
-    /// Defines API endpoints for user authentication operations such as login.
+    /// Defines API endpoints for user authentication operations, including login, registration, and token refresh
+    /// functionality.
     /// </summary>
-    /// <remarks>This controller provides endpoints for handling authentication-related actions. It is
-    /// intended to be used as part of an ASP.NET Core Web API and relies on dependency injection for the authentication
-    /// service.</remarks>
-    /// <param name="authService">The authentication service used to process authentication requests.</param>
+    /// <remarks>This controller provides endpoints for common authentication workflows in the application.
+    /// All actions are accessible via the 'api/v1/auth' route prefix. Each endpoint expects the relevant request data
+    /// in the request body and returns an appropriate HTTP response based on the operation outcome.</remarks>
+    /// <param name="mediator">The mediator instance used to send authentication-related commands and queries. Cannot be null.</param>
     [ApiController]
-    [ValidationFilter]
     [Route("api/v1/[controller]")]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController(IMediator mediator) : ControllerBase
     {
-        private readonly IAuthService _authService = authService;
+        private readonly IMediator _mediator = mediator;
 
         /// <summary>
         /// Authenticates a user based on the provided login credentials.
         /// </summary>
-        /// <param name="request">The login request containing user credentials. Cannot be null.</param>
+        /// <param name="request">The login command containing the user's credentials. Cannot be null.</param>
         /// <param name="ct">A cancellation token that can be used to cancel the login operation.</param>
-        /// <returns>An IActionResult containing the authentication result if successful; otherwise, an unauthorized response.</returns>
+        /// <returns>An IActionResult containing the authentication result. Returns a success response with authentication
+        /// details if the credentials are valid; otherwise, returns an error response.</returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken ct)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginCommand request, 
+            CancellationToken ct)
         {
-            var result = await _authService.LoginAsync(request, ct);
+            var result = await _mediator.Send(request, ct);
             return Ok(result);
         }
 
         /// <summary>
         /// Registers a new user account using the provided registration details.
         /// </summary>
-        /// <param name="request">The registration information for the new user. Must not be null.</param>
-        /// <param name="ct">A cancellation token that can be used to cancel the registration operation.</param>
-        /// <returns>An IActionResult indicating the result of the registration attempt. Returns a success response with
-        /// registration details if successful; otherwise, returns a bad request with an error message.</returns>
+        /// <remarks>This endpoint is typically used to create a new user in the system. The response
+        /// includes the outcome of the registration process. If registration fails due to validation errors or other
+        /// issues, an appropriate error response is returned.</remarks>
+        /// <param name="request">The registration information required to create a new user account.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>An IActionResult containing the result of the registration operation.</returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken ct)
+        public async Task<IActionResult> Register(
+            [FromBody] RegisterCommand request, 
+            CancellationToken ct)
         {
-            var result = await _authService.RegisterAsync(request, ct);
+            var result = await _mediator.Send(request, ct);
             return Ok(result);
         }
 
         /// <summary>
-        /// Exchanges a valid refresh token for a new access token and refresh token pair.
+        /// Handles a request to refresh an access token using a valid refresh token.
         /// </summary>
-        /// <param name="req">The request containing the refresh token to be validated and exchanged.</param>
+        /// <remarks>This endpoint is typically used to obtain a new access token when the current one has
+        /// expired, provided the refresh token is still valid. The client must supply a valid refresh token in the
+        /// request body.</remarks>
+        /// <param name="req">The request containing the refresh token to be validated and exchanged for a new access token. Cannot be
+        /// null.</param>
         /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
-        /// <returns>An IActionResult containing the new access and refresh tokens if the refresh token is valid; otherwise, an
-        /// error response.</returns>
+        /// <returns>An IActionResult containing the new access token and related information if the refresh token is valid;
+        /// otherwise, an error response.</returns>
         [HttpPost("refresh")]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest req, CancellationToken ct)
+        public async Task<IActionResult> RefreshToken(
+            [FromBody] RefreshTokenRequest req, 
+            CancellationToken ct)
         {
-            var result = await _authService.RefreshTokenAsync(req.RefreshToken, ct);
+            var result = await _mediator.Send(new RefreshTokenCommand(req.RefreshToken), ct);
             return Ok(result);
         }
     }
