@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
@@ -8,21 +9,23 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionByI
 {
     public class GetSubmissionByIdQueryHandler
         (IProductSubmissionRepository submissionRepository)
-        : IRequestHandler<GetSubmissionByIdQuery, GetSubmissionDto>
+        : IRequestHandler<GetSubmissionByIdQuery, Result<GetSubmissionDto>>
     {
         private readonly IProductSubmissionRepository _submissionRepository = submissionRepository;
-        public async Task<GetSubmissionDto> Handle(
+        public async Task<Result<GetSubmissionDto>> Handle(
             GetSubmissionByIdQuery request,
             CancellationToken cancellationToken)
         {
             var submission = await _submissionRepository
-                .GetByIdWithDetailsAsync(request.SubmissionId, cancellationToken)
-                ?? throw new DomainException($"Submission with id {request.SubmissionId} not found.");
-
+                .GetByIdWithDetailsAsync(request.SubmissionId, cancellationToken);
+            if (submission == null)
+                return Result<GetSubmissionDto>.Failure(Error
+                    .NotFound($"Submission with id {request.SubmissionId} not found."));
             if (submission.DropId != request.DropId)
-                throw new DomainException($"Submission with id {request.SubmissionId} not found in drop {request.DropId}.");
+                return Result<GetSubmissionDto>.Failure(Error
+                    .NotFound($"Submission with id {request.SubmissionId} not found in drop {request.DropId}."));
 
-            return new GetSubmissionDto(
+            var response = new GetSubmissionDto(
                 Id: submission.Id,
                 ProductName: submission.ProductName,
                 Brand: submission.SneakersBrand?.BrandName ?? "Unknown",
@@ -36,6 +39,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionByI
                     MeasureSizes.CM
                 ))]
             );
+            return Result<GetSubmissionDto>.Success(response);
         }
     }
 }

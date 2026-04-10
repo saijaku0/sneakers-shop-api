@@ -67,5 +67,6 @@ namespace Sneakers.Shop.Backend.Api.Extensions
                 _ => controller.BadRequest(result.Error.Message)
             };
         }
+    }
 }
 

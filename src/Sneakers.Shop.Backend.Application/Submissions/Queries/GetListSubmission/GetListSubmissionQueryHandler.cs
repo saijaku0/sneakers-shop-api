@@ -1,23 +1,23 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.Response;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
-using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission
 {
     public class GetListSubmissionQuery(
         IProductSubmissionRepository productRepository) 
-        : IRequestHandler<GetMySubmissionsQuery, GetSubmissionsResponse>
+        : IRequestHandler<GetMySubmissionsQuery, Result<GetSubmissionsResponse>>
     {
         private readonly IProductSubmissionRepository _productRepository = productRepository;
-        public async Task<GetSubmissionsResponse> Handle(
+        public async Task<Result<GetSubmissionsResponse>> Handle(
             GetMySubmissionsQuery request, 
             CancellationToken cancellationToken)
         {
             if (request.Page <= 0 || request.PageSize <= 0)
-                throw new DomainException("Page must be >= 1 and pageSize more than 0.");
+                return Result<GetSubmissionsResponse>.Failure(Error.BadRequest("Page and PageSize must be greater than 0."));
 
             var submissions = await _productRepository.GetByDropperIdAsync(
                 request.DropId, 
@@ -45,7 +45,8 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmissio
                 ))]
             )).ToList();
 
-            return new GetSubmissionsResponse(submissionsDtos, getTotalCount);
+            var response = new GetSubmissionsResponse(submissionsDtos, getTotalCount);
+            return Result<GetSubmissionsResponse>.Success(response);
         }
     }
 }
