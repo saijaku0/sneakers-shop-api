@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Auth.DTOs;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.ValueObjects;
 
 namespace Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser
@@ -10,5 +11,5 @@ namespace Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser
         string PhoneNumber,
         string Email,
         string Password,
-        Address? DefaultShippingAddress) : IRequest<AuthResponse>;
+        Address? DefaultShippingAddress) : IRequest<Result<AuthResponse>>;
 }

@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Sneakers.Shop.Backend.Application.Submissions.Helpers;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Interfaces;
@@ -10,22 +12,23 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmissio
         IProductSubmissionRepository submissionRepository,
         ISizeConversionService sizeConversionService,
         IUnitOfWork unitOfWork)
-        : IRequestHandler<UpdateSubmissionCommand, Unit>
+        : IRequestHandler<UpdateSubmissionCommand, Result>
     {
         private readonly IProductSubmissionRepository _submissionRepository = submissionRepository;
         private readonly ISizeConversionService _sizeConversionService = sizeConversionService;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<Unit> Handle(
+        public async Task<Result> Handle(
             UpdateSubmissionCommand request, 
             CancellationToken cancellationToken)
         {
             var submission = await _submissionRepository
-                .GetByIdAsync(request.SubmissionId, cancellationToken)
-                ?? throw new DomainException($"Submission with ID {request.SubmissionId} not found.");
+                .GetByIdAsync(request.SubmissionId, cancellationToken);
+            if (submission == null)
+                return Result.Failure(Error.NotFound($"Submission with ID {request.SubmissionId} not found."));
 
             if (submission.DropId != request.DropId)
-                throw new DomainException("Submission does not belong to the specified drop.");
+                return Result.Failure(Error.Conflict("Submission does not belong to the specified drop."));
 
             submission.UpdateDetails(
                 request.Payload.TargetAudience,
@@ -36,21 +39,17 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmissio
                 request.Payload.BasePrice);
 
             submission.SetSizeList(
-                request.Payload.SubmissionSizes.Select(s =>
-                {
-                    var sizeInCm = _sizeConversionService.GetEquivalentSize(
-                        s.SizeValue,
-                        s.MeasureType,
-                        MeasureSizes.CM,
-                        request.Payload.TargetAudience
-                    );
-                    return (s.Quantity, sizeInCm);
-                })
+                SubmissionSizeMapper
+                .MapSizes(
+                    request.Payload.SubmissionSizes,
+                    request.Payload.TargetAudience,
+                    _sizeConversionService
+                )
             );
 
             _submissionRepository.Update(submission);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return Result.Success();
         }
     }
 }

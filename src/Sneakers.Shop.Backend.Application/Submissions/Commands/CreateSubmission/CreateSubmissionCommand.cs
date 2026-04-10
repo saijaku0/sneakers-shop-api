@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission
@@ -12,5 +13,5 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmissio
         string Model,
         string Description,
         decimal BasePrice,
-        IReadOnlyCollection<SubmissionSizeDto> SubmissionSizes) : IRequest<Guid>;
+        IReadOnlyCollection<SubmissionSizeDto> SubmissionSizes) : IRequest<Result<Guid>>;
 }

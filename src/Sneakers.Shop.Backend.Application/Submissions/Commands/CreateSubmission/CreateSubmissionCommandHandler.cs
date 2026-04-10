@@ -1,41 +1,37 @@
 ﻿using MediatR;
+using Sneakers.Shop.Backend.Application.Submissions.Helpers;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Entities;
 using Sneakers.Shop.Backend.Domain.Enums;
 using Sneakers.Shop.Backend.Domain.Interfaces;
 using Sneakers.Shop.Backend.Domain.Repositories;
-using Sneakers.Shop.Backend.Domain.Services;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission
 {
     public class CreateSubmissionCommandHandler(
-        IUserProfileRepository userProfileRepository,
         IBrandRepository brandRepository,
         IProductSubmissionRepository productRepository,
         ISizeConversionService sizeConversion,
         IUnitOfWork unitOfWork)
-        : IRequestHandler<CreateSubmissionCommand, Guid>
+        : IRequestHandler<CreateSubmissionCommand, Result<Guid>>
     {
-        private readonly IUserProfileRepository _userProfileRepository = userProfileRepository;
         private readonly IBrandRepository _brandRepository = brandRepository;
         private readonly IProductSubmissionRepository _productRepository = productRepository;
         private readonly ISizeConversionService _sizeConversion = sizeConversion;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
-        public async Task<Guid> Handle(
+        public async Task<Result<Guid>> Handle(
             CreateSubmissionCommand request, 
             CancellationToken cancellationToken)
         { 
-            var brand = await _brandRepository.GetByIdAsync(request.BrandId, cancellationToken)
-                ?? throw new ArgumentException($"Brand with ID {request.BrandId} does not exist.");
+            var brand = await _brandRepository.GetByIdAsync(request.BrandId, cancellationToken);
+            if (brand == null)
+                return Result<Guid>.Failure(Error.Conflict($"Brand with ID {request.BrandId} does not exist."));
 
-            var size = request.SubmissionSizes.Select(s => {
-                var sizeInCm = _sizeConversion.GetEquivalentSize(
-                    s.SizeValue,
-                    s.MeasureType,
-                    MeasureSizes.CM,
-                    request.TargetAudience
-                );
-                return (s.Quantity, sizeInCm);
-            }).ToList();
+            var sizes = SubmissionSizeMapper.MapSizes(
+                request.SubmissionSizes,
+                request.TargetAudience,
+                _sizeConversion
+            );
 
             var submission = new ProductSubmission
             (
@@ -46,11 +42,11 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmissio
                 request.Model,
                 request.Description,
                 request.BasePrice,
-                size
+                sizes
             );
             await _productRepository.AddAsync(submission, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return submission.Id;
+            return Result<Guid>.Success(submission.Id);
         }
     }
 }

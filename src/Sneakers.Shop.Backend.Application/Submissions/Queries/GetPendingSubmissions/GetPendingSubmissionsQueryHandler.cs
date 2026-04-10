@@ -1,24 +1,25 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.Response;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
-using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetPendingSubmissions
 {
     public class GetPendingSubmissionsQueryHandler(
     IProductSubmissionRepository submissionRepository)
-    : IRequestHandler<GetPendingSubmissionsQuery, GetPendingSubmissionsResponse>
+    : IRequestHandler<GetPendingSubmissionsQuery, Result<GetPendingSubmissionsResponse>>
     {
         private readonly IProductSubmissionRepository _submissionRepository = submissionRepository;
 
-        public async Task<GetPendingSubmissionsResponse> Handle(
+        public async Task<Result<GetPendingSubmissionsResponse>> Handle(
             GetPendingSubmissionsQuery request,
             CancellationToken cancellationToken)
         {
             if (request.Page <= 0 || request.PageSize <= 0)
-                throw new DomainException("Page must be >= 1 and pageSize more than 0.");
+                return Result<GetPendingSubmissionsResponse>
+                    .Failure(Error.BadRequest("Page must be >= 1 and pageSize more than 0."));
 
             var submissions = await _submissionRepository.GetPendingAsync(
                 request.Page,
@@ -44,7 +45,8 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetPendingSubmis
                 DropperName: s.Dropper != null ? $"{s.Dropper.Name} {s.Dropper.Lastname}" : "Unknown"
             )).ToList();
 
-            return new GetPendingSubmissionsResponse(dtos, total);
+            var response = new GetPendingSubmissionsResponse(dtos, total);
+            return Result<GetPendingSubmissionsResponse>.Success(response);
         }
     }
 }

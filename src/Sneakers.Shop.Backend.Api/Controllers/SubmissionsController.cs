@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sneakers.Shop.Backend.Api.Extensions;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
@@ -8,6 +9,7 @@ using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetPendingSubmissions;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById;
+using Sneakers.Shop.Backend.Domain.Common;
 using System.Security.Claims;
 
 namespace Sneakers.Shop.Backend.Api.Controllers
@@ -51,8 +53,8 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             var dropId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(dropId, out var parsedDropId))
                 return Unauthorized();
-            var submissionId = await _mediator.Send(command with { DropId = parsedDropId }, ct);
-            return Ok(submissionId);
+            var result = await _mediator.Send(command with { DropId = parsedDropId }, ct);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -83,7 +85,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
 
             var query = new GetMySubmissionsQuery(parsedDropId, page, pageSize);
             var result = await _mediator.Send(query, ct);
-            return Ok(result);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -112,8 +114,8 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             if (!Guid.TryParse(userId, out var parsedUserId))
                 return Unauthorized();
             var command = new CancelSubmissionCommand(id, parsedUserId);
-            await _mediator.Send(command, ct);
-            return NoContent();
+            var result = await _mediator.Send(command, ct);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -152,8 +154,8 @@ namespace Sneakers.Shop.Backend.Api.Controllers
                 request
             );
 
-            await _mediator.Send(command, ct);
-            return NoContent();
+            var res = await _mediator.Send(command, ct);
+            return res.ToActionResult(this);
         }
 
         /// <summary>
@@ -190,10 +192,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
                 return Unauthorized();
             var query = new GetSubmissionByIdQuery(parsedUserId, submissionId);
             var result = await _mediator.Send(query, ct);
-            if (result == null)
-                return NotFound();
-
-            return Ok(result);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -235,7 +234,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
 
             var query = new GetPendingSubmissionsQuery(parsedModeratorId, page, pageSize);
             var result = await _mediator.Send(query, ct);
-            return Ok(result);
+            return result.ToActionResult(this);
         }
     }
 }

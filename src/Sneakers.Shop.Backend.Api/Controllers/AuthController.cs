@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Api.DTOs;
+using Sneakers.Shop.Backend.Api.Extensions;
 using Sneakers.Shop.Backend.Application.Auth.Command.Login;
 using Sneakers.Shop.Backend.Application.Auth.Command.RefreshToken;
 using Sneakers.Shop.Backend.Application.Auth.Command.RegisterNewUser;
@@ -34,7 +35,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             CancellationToken ct)
         {
             var result = await _mediator.Send(request, ct);
-            return Ok(result);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             CancellationToken ct)
         {
             var result = await _mediator.Send(request, ct);
-            return Ok(result);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -72,7 +73,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             CancellationToken ct)
         {
             var result = await _mediator.Send(new RefreshTokenCommand(req.RefreshToken), ct);
-            return Ok(result);
+            return result.ToActionResult(this);
         }
     }
 }
