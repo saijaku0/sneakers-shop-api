@@ -1,15 +1,16 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Application.Products.DTOs;
+using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Products.Queries.GetProducts
 {
     public class GetProductsQueryHandler(IProductRepository productRepository)
-        : IRequestHandler<GetProductsQuery, GetProductsResponse>
+        : IRequestHandler<GetProductsQuery, Result<GetProductsResponse>>
     {
         private readonly IProductRepository _productRepository = productRepository;
 
-        public async Task<GetProductsResponse> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<GetProductsResponse>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
         {
             var (page, pageSize) = request;
             var products = await _productRepository.GetAllActiveAsync(page, pageSize, cancellationToken);
@@ -29,7 +30,8 @@ namespace Sneakers.Shop.Backend.Application.Products.Queries.GetProducts
                 Discount: p.Discounts.FirstOrDefault(d => d.IsActive())?.DiscountValue
             )).ToList();
 
-            return new GetProductsResponse(productDtos, totalCount);
+            var response = new GetProductsResponse(productDtos, totalCount);
+            return Result<GetProductsResponse>.Success(response);
         }
     }
 }
