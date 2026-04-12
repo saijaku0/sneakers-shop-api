@@ -79,11 +79,26 @@ jobs:
       - name: Postman Auth
         run: postman login --with-api-key ${{ secrets.POSTMAN_KEY }}
 
+      - name: Generate dummy test file
+        run: |
+          mkdir -p postman/files
+          dd if=/dev/zero of=postman/files/test-image.jpg bs=1024 count=10
+
       - name: Run Postman tests
         run: |
-          find postman/collections -mindepth 1 -maxdepth 1 -type d | while read dir; do
+          EXIT_CODE=0
+          
+          for dir in postman/collections/*/; do
+            # Убираем слеш на конце для красоты путей
+            dir=${dir%*/}
+            
+            echo "Running collection in: $dir"
+            
             postman collection run "$dir" \
               --environment postman/environments/SneakersShopCI.postman_environment.json \
-              --verbose
+              --working-dir postman/files \
+              --verbose || EXIT_CODE=1
           done
+          
+          exit $EXIT_CODE
 

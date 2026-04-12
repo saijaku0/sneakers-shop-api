@@ -8,7 +8,7 @@ body:
     - type: file
       key: files
       src:
-        - postman-cloud:///1f1366a7-fdbf-41b0-aad4-3e0e0780b3c5
+        - postman-cloud:///1f1366ec-42e3-40e0-a2e3-4f4f7971a2af
       description: ""
       disabled: false
 auth:
