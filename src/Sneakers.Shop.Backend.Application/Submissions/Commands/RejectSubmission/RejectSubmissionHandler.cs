@@ -18,6 +18,8 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.RejectSubmissio
             var submission = await _productSubmissionRepository.GetByIdAsync(request.SubmissionId, cancellationToken);
             if (submission is null)
                 return Result.Failure(Error.NotFound("Submission not found."));
+            if (request.ModeratorId == submission.Dropper?.Id)
+                return Result.Failure(Error.Forbidden("You cannot moderate your own submission."));
             submission.Reject(request.ModeratorId, request.Reason);
             _productSubmissionRepository.Update(submission);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
