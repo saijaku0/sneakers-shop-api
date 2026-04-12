@@ -18,6 +18,7 @@ using Sneakers.Shop.Backend.Infrastructure.Identity;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
 using Sneakers.Shop.Backend.Infrastructure.Repositories;
 using Sneakers.Shop.Backend.Infrastructure.Seeders;
+using Sneakers.Shop.Backend.Infrastructure.Storage;
 using System.Text;
 
 namespace Sneakers.Shop.Backend.Infrastructure
@@ -53,6 +54,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<RoleSeeder>();
             service.AddScoped<IAuthorizationHandler, ActiveDropperHandler>();
             service.AddScoped<IAuthorizationHandler, ActiveModeratorHandler>();
+            service.AddScoped<IStorageService, StorageService>();
 
             service.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
             {
