@@ -35,7 +35,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
             });
 
             builder.Property(x => x.ImagesUrls)
-    .HasColumnType("text[]");
+                .HasColumnType("text[]");
 
             builder.Property(x => x.Model)
                 .IsRequired()
