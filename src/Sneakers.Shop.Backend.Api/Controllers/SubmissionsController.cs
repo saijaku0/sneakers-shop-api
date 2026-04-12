@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Api.Extensions;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.ApproveSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.RejectSubmission;
@@ -271,6 +272,50 @@ namespace Sneakers.Shop.Backend.Api.Controllers
                 ModeratorId: parsedModeratorId,
                 Reason: request.Reason
             );
+            var result = await _mediator.Send(command, ct);
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Approves a submission with the specified identifier and attaches the provided files.
+        /// </summary>
+        /// <remarks>Requires the caller to be an active moderator as defined by the 'ActiveModerator'
+        /// policy. Returns 401 if the user is not authenticated, 403 if the user lacks sufficient permissions, 404 if
+        /// the submission does not exist, and 400 for invalid requests.</remarks>
+        /// <param name="id">The unique identifier of the submission to approve.</param>
+        /// <param name="files">A collection of files to associate with the approved submission. May be empty if no files are provided.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>A result indicating the outcome of the operation. Returns 204 No Content if the approval is successful;
+        /// returns appropriate error responses for invalid input, authorization failures, or if the submission is not
+        /// found.</returns>
+        [HttpPost("{id}/approve")]
+        [Authorize(Policy = "ActiveModerator")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ApproveSubmission(
+            [FromRoute] Guid id,
+            [FromForm] IFormFileCollection files,
+            CancellationToken ct)
+        {
+            var moderatorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(moderatorId, out var parsedModeratorId))
+                return Unauthorized();
+
+            var fileData = files.Select(f => (
+                Stream: f.OpenReadStream(),
+                f.FileName
+            ));
+
+            var command = new ApproveSubmissionCommand(
+                SubmissionId: id,
+                ModeratorId: parsedModeratorId,
+                Files: fileData
+            );
+
             var result = await _mediator.Send(command, ct);
             return result.ToActionResult(this);
         }
