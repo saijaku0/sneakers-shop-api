@@ -34,6 +34,9 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                     .HasColumnType(DecimalPrecision);
             });
 
+            builder.Property(x => x.ImagesUrls)
+    .HasColumnType("text[]");
+
             builder.Property(x => x.Model)
                 .IsRequired()
                 .HasMaxLength(100);

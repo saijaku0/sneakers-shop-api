@@ -942,7 +942,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -1031,7 +1031,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 
                             b1.HasKey("ProductSubmissionId", "Id");
 
-                            b1.ToTable("SubmissionSize");
+                            b1.ToTable("SubmissionSize", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("ProductSubmissionId");
@@ -1104,7 +1104,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 
                             b1.HasKey("UserProfileId");
 
-                            b1.ToTable("UserProfiles");
+                            b1.ToTable("UserProfiles", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("UserProfileId");
