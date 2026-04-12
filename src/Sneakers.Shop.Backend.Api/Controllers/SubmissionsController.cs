@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Api.Extensions;
+using Sneakers.Shop.Backend.Api.Validators;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.ApproveSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
@@ -304,6 +305,10 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             var moderatorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (!Guid.TryParse(moderatorId, out var parsedModeratorId))
                 return Unauthorized();
+
+            var (isValid, error) = FileValidator.Validate(files);
+            if (!isValid)
+                return BadRequest(error);
 
             var fileData = files.Select(f => (
                 Stream: f.OpenReadStream(),

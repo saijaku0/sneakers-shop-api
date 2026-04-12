@@ -21,7 +21,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Commands.ApproveSubmissi
             var submission = await _productSubmission.GetByIdAsync(request.SubmissionId, cancellationToken);
             if (submission is null)
                 return Result.Failure(Error.NotFound("Submission not found"));
-            if (request.ModeratorId == submission.ModeratorId)
+            if (request.ModeratorId == submission.DropId)
                 return Result.Failure(Error.Unauthorized("You cannot approve your own submission"));
             var imageUrls = await _storageService.UploadManyAsync(
                 request.Files.Select(f => (f.Stream, f.FileName)),
