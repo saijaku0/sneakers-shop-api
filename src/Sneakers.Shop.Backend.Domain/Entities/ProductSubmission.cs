@@ -23,6 +23,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public ProductSubmissionStatus Status { get; private set; }
         public string? RejectionReason { get; private set; }
         public Guid? ModeratorId { get; private set; }
+        public IReadOnlyList<string> ImagesUrls => _imagesUrls.AsReadOnly();
+        private List<string> _imagesUrls = [];
         public DateTimeOffset CheckedAt { get; private set; }
         public DateTimeOffset CreatedAt { get; private set; }
 
@@ -79,7 +81,9 @@ namespace Sneakers.Shop.Backend.Domain.Entities
                 throw new DomainException("ModeratorId cannot be empty.", nameof(moderatorId));
         }
 
-        public void Approve(Guid moderatorId)
+        public void Approve(
+            Guid moderatorId,
+            IEnumerable<string> imageUrls)
         {
             EnsureModeratorId(moderatorId);
             EnsurePendingStatus();
@@ -87,6 +91,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             Status = ProductSubmissionStatus.Approved;
             ModeratorId = moderatorId;
             CheckedAt = DateTimeOffset.UtcNow;
+            _imagesUrls = [.. imageUrls];
             RejectionReason = null;
         }
 

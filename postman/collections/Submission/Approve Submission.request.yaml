@@ -1,0 +1,132 @@
+$kind: http-request
+name: Approve Submission
+url: "{{baseUrl}} /api/v1/submissions/{{submissionId}}/approve"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: files
+      src:
+        - postman-cloud:///1f1366ec-42e3-40e0-a2e3-4f4f7971a2af
+      description: ""
+      disabled: false
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+scripts:
+  - type: beforeRequest
+    code: "const dropperLogin = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"dropper@test.com\",\r
+
+      \            password: \"Dropper1234!\"\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      const dropperToken = dropperLogin.json().accessToken;\r
+
+      \r
+
+      const createSubmission = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/submissions\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: {\r
+
+      \        \"Content-Type\": \"application/json\",\r
+
+      \        \"Authorization\": \"Bearer \" + dropperToken\r
+
+      \    },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            brandId: \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\r
+
+      \            targetAudience: 0,\r
+
+      \            productName: \"Nike Air Max 2022\",\r
+
+      \            model: \"DX1234-001\",\r
+
+      \            description: \"Free effect and adaptive Air Max.\",\r
+
+      \            basePrice: 159.99,\r
+
+      \            submissionSizes: [\r
+
+      \                { quantity: 10, sizeValue: 42.5, measureType: 2 },\r
+
+      \                { quantity: 5, sizeValue: 44.0, measureType: 2 }\r
+
+      \            ]\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      pm.environment.set(\"submissionId\",
+      createSubmission.json().replace(/\"/g, \"\"));\r
+
+      \r
+
+      const loginResponse = await pm.sendRequest({\r
+
+      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/auth/login\",\r
+
+      \    method: \"POST\",\r
+
+      \    header: { \"Content-Type\": \"application/json\" },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            email: \"moderator@test.com\",\r
+
+      \            password: \"Moderator1234!\"\r
+
+      \        })\r
+
+      \    }\r
+
+      });\r
+
+      pm.environment.set(\"accessToken\", loginResponse.json().accessToken);"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status is 204\", function () {\r
+
+      \    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);\r
+
+      });"
+    language: text/javascript
+order: 4482479639704932
