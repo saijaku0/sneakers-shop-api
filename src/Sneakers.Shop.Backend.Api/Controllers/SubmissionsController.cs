@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Sneakers.Shop.Backend.Api.Extensions;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CancelSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.CreateSubmission;
+using Sneakers.Shop.Backend.Application.Submissions.Commands.RejectSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.Commands.UpdateSubmission;
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Application.Submissions.Queries.GetListSubmission;
@@ -234,6 +235,43 @@ namespace Sneakers.Shop.Backend.Api.Controllers
 
             var query = new GetPendingSubmissionsQuery(parsedModeratorId, page, pageSize);
             var result = await _mediator.Send(query, ct);
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Rejects a pending submission with the specified reason as an authorized moderator.
+        /// </summary>
+        /// <remarks>Requires the caller to be an authenticated moderator with the 'ActiveModerator'
+        /// policy. The moderator's identifier is determined from the current user context.</remarks>
+        /// <param name="id">The unique identifier of the submission to reject.</param>
+        /// <param name="request">The command containing the reason for rejection. Must not be null.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the operation. Returns 200 OK if the submission was
+        /// successfully rejected; 400 Bad Request if the request is invalid; 401 Unauthorized if the user is not
+        /// authenticated; 403 Forbidden if the user lacks permission; 404 Not Found if the submission does not exist;
+        /// or 500 Internal Server Error for unexpected errors.</returns>
+        [HttpPost("{id}/reject")]
+        [Authorize(Policy = "ActiveModerator")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RejectSubmission(
+            [FromRoute] Guid id,
+            [FromBody] RejectSubmissionCommand request,
+            CancellationToken ct)
+        {
+            var moderatorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(moderatorId, out var parsedModeratorId))
+                return Unauthorized();
+            var command = new RejectSubmissionCommand(
+                SubmissionId: id,
+                ModeratorId: parsedModeratorId,
+                Reason: request.Reason
+            );
+            var result = await _mediator.Send(command, ct);
             return result.ToActionResult(this);
         }
     }
