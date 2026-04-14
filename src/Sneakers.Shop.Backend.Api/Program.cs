@@ -39,6 +39,7 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddScoped<UserSeeder>();
     builder.Services.AddScoped<BrandSeeder>();
+    builder.Services.AddScoped<SizeSeeder>();
 }
 
 var app = builder.Build();
@@ -54,6 +55,8 @@ using (var scope = app.Services.CreateScope())
         await userSeeder.SeedAsync();
         var brandSeeder = scope.ServiceProvider.GetRequiredService<BrandSeeder>();
         await brandSeeder.SeedAsync();
+        var sizeSeeder = scope.ServiceProvider.GetRequiredService<SizeSeeder>();
+        await sizeSeeder.SeedAsync();
     }
 }
 
