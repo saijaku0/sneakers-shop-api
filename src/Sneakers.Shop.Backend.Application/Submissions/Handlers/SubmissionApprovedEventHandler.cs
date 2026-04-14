@@ -9,19 +9,19 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Handlers
     public class SubmissionApprovedEventHandler(
         IProductSubmissionRepository submissionRepository,
         IProductRepository productRepository,
-        IUnitOfWork unitOfWork) 
+        IUnitOfWork unitOfWork)
         : INotificationHandler<DomainEventNotification<SubmissionApprovedEvent>>
     {
         private readonly IProductSubmissionRepository _submissionRepository = submissionRepository;
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         public async Task Handle(
-            DomainEventNotification<SubmissionApprovedEvent> notification, 
+            DomainEventNotification<SubmissionApprovedEvent> notification,
             CancellationToken cancellationToken)
         {
             var submission = await _submissionRepository.GetByIdAsync(notification
                 .DomainEvent
-                .SubmissionId, 
+                .SubmissionId,
                 cancellationToken);
             if (submission is null)
                 return;
