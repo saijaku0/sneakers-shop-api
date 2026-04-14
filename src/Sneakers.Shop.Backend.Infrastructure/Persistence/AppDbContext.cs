@@ -46,15 +46,17 @@ namespace Sneakers.Shop.Backend.Infrastructure.Persistence
                 .Select(e => e.Entity)
                 .ToList();
 
-            var result = await base.SaveChangesAsync(cancellationToken);
+            var events = entities
+                .SelectMany(e => e.Events)
+                .ToList();
 
             foreach (var entity in entities)
-            {
-                foreach (var domainEvent in entity.Events)
-                    await publisher.PublishAsync(domainEvent, cancellationToken);
-
                 entity.ClearEvents();
-            }
+
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            foreach (var domainEvent in events)
+                await publisher.PublishAsync(domainEvent, cancellationToken);
 
             return result;
         }
