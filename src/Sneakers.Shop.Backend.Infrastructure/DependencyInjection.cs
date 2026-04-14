@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Sneakers.Shop.Backend.Application.Auth.Command;
 using Sneakers.Shop.Backend.Application.Auth.Interfaces;
 using Sneakers.Shop.Backend.Application.Common.Interfaces;
 using Sneakers.Shop.Backend.Domain.Interfaces;
@@ -42,6 +41,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<ISalesSnapshotRepository, SalesSnapshotRepository>();
             service.AddScoped<IProductSubmissionRepository, ProductSubmissionRepository>();
             service.AddScoped<IBrandRepository, BrandRepository>();
+            service.AddScoped<ISizeRepository, SizeRepository>();
 
             service.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             service.AddScoped<IJwtService, JwtService>();

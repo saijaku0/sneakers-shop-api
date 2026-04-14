@@ -1,5 +1,6 @@
 ﻿using Sneakers.Shop.Backend.Domain.Abstractions;
 using Sneakers.Shop.Backend.Domain.Enums;
+using Sneakers.Shop.Backend.Domain.Events;
 using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.ValueObjects;
 
@@ -93,6 +94,8 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             CheckedAt = DateTimeOffset.UtcNow;
             _imagesUrls = [.. imageUrls];
             RejectionReason = null;
+
+            AddEvent(new SubmissionApprovedEvent(Id, ModeratorId.Value));
         }
 
         public void Reject(Guid moderatorId, string reason)
