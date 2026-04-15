@@ -324,5 +324,34 @@ namespace Sneakers.Shop.Backend.Api.Controllers
             var result = await _mediator.Send(command, ct);
             return result.ToActionResult(this);
         }
+
+        /// <summary>
+        /// Retrieves the details of a specific submission by its unique identifier.
+        /// </summary>
+        /// <remarks>Requires the caller to be an active moderator. Returns status code 200 if the
+        /// submission is found, 404 if not found, 401 if the user is unauthorized, 403 if access is forbidden, or 500
+        /// for an internal server error.</remarks>
+        /// <param name="id">The unique identifier of the submission to retrieve.</param>
+        /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the submission details if found; otherwise, a result indicating
+        /// the appropriate error status.</returns>
+        [HttpGet("{id}")]
+        [Authorize(Policy = "ActiveModerator")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetSubmissionById(
+            [FromRoute] Guid id,
+            CancellationToken ct)
+        {
+            var moderatorId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(moderatorId, out var parsedModeratorId))
+                return Unauthorized();
+            var query = new GetSubmissionByIdQuery(null, id);
+            var result = await _mediator.Send(query, ct);
+            return result.ToActionResult(this);
+        }
     }
 }
