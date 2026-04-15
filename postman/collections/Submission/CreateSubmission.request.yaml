@@ -1,6 +1,6 @@
 $kind: http-request
 name: CreateSubmission
-url: "{{baseUrl}}/api/v1/submissions"
+url: "{{baseUrl}}/api/v1/droppers-submissions"
 method: POST
 body:
   type: json

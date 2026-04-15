@@ -1,6 +1,6 @@
 $kind: http-request
 name: Approve Submission
-url: "{{baseUrl}} /api/v1/submissions/{{submissionId}}/approve"
+url: "{{baseUrl}} /api/v1/moderators-submissions/{{submissionId}}/approve"
 method: POST
 body:
   type: formdata

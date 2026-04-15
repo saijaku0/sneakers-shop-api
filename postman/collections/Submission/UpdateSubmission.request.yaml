@@ -1,6 +1,6 @@
 $kind: http-request
 name: UpdateSubmission
-url: "{{baseUrl}}/api/v1/submissions/{{submissionId}}"
+url: "{{baseUrl}}/api/v1/droppers-submissions/{{submissionId}}"
 method: PUT
 body:
   type: json
