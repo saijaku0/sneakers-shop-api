@@ -2,7 +2,6 @@
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
-using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById
