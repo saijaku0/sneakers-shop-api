@@ -1,6 +1,8 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Scalar.AspNetCore;
 using Sneakers.Shop.Backend.Api.Middleware;
+using Sneakers.Shop.Backend.Api.Transformers;
 using Sneakers.Shop.Backend.Application.Injection;
 using Sneakers.Shop.Backend.Infrastructure;
 using Sneakers.Shop.Backend.Infrastructure.Auth.Requirments;
@@ -24,6 +26,12 @@ builder.Services.AddOpenApi(options =>
         document.Info.Version = "v1";
         return Task.CompletedTask;
     });
+});
+
+builder.Services.AddControllers(options =>
+{
+    options.Conventions.Add(
+        new RouteTokenTransformerConvention(new SlugifyParameterTransformer()));
 });
 
 builder.Services.AddAuthorization(options =>
