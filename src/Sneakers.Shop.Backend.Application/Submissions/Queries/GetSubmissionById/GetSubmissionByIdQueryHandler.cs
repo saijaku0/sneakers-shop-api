@@ -21,7 +21,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionByI
             if (submission == null)
                 return Result<GetSubmissionDto>.Failure(Error
                     .NotFound($"Submission with id {request.SubmissionId} not found."));
-            if (submission.DropId != request.DropId)
+            if (request.DropId.HasValue && submission.DropId != request.DropId)
                 return Result<GetSubmissionDto>.Failure(Error
                     .NotFound($"Submission with id {request.SubmissionId} not found in drop {request.DropId}."));
 
