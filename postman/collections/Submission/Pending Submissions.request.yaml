@@ -1,6 +1,6 @@
 $kind: http-request
 name: Pending Submissions
-url: "{{baseUrl}}/api/v1/submissions/pending?page=1&pageSize=10"
+url: "{{baseUrl}}/api/v1/moderators-submissions/pending?page=1&pageSize=10"
 method: GET
 queryParams:
   page: "1"

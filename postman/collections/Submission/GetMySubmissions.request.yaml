@@ -1,6 +1,6 @@
 $kind: http-request
 name: GetMySubmissions
-url: "{{baseUrl}}/api/v1/submissions/my-submissions?page=1&pageSize=10"
+url: "{{baseUrl}}/api/v1/droppers-submissions/my-submissions?page=1&pageSize=10"
 method: GET
 queryParams:
   page: "1"

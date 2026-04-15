@@ -2,7 +2,6 @@
 using Sneakers.Shop.Backend.Application.Submissions.DTOs;
 using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Enums;
-using Sneakers.Shop.Backend.Domain.Exceptions;
 using Sneakers.Shop.Backend.Domain.Repositories;
 
 namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionById
@@ -21,7 +20,7 @@ namespace Sneakers.Shop.Backend.Application.Submissions.Queries.GetSubmissionByI
             if (submission == null)
                 return Result<GetSubmissionDto>.Failure(Error
                     .NotFound($"Submission with id {request.SubmissionId} not found."));
-            if (submission.DropId != request.DropId)
+            if (request.DropId.HasValue && submission.DropId != request.DropId)
                 return Result<GetSubmissionDto>.Failure(Error
                     .NotFound($"Submission with id {request.SubmissionId} not found in drop {request.DropId}."));
 
