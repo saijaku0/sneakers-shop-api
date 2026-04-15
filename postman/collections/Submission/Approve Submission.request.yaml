@@ -47,7 +47,8 @@ scripts:
 
       const createSubmission = await pm.sendRequest({\r
 
-      \    url: pm.environment.get(\"baseUrl\") + \"/api/v1/submissions\",\r
+      \    url: pm.environment.get(\"baseUrl\") +
+      \"/api/v1/droppers-submissions\",\r
 
       \    method: \"POST\",\r
 
