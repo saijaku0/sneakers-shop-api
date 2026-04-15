@@ -22,7 +22,7 @@ namespace Sneakers.Shop.Backend.Api.Controllers
     /// <param name="mediator">The mediator used to dispatch commands and queries related to submissions.</param>
     [Authorize]
     [ApiController]
-    [Route("api/v1/droppers/[controller]")]
+    [Route("api/v1/[controller]")]
     public class DroppersSubmissionsController(IMediator mediator) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;

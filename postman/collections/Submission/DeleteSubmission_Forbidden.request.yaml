@@ -1,6 +1,6 @@
 $kind: http-request
 name: DeleteSubmission_Forbidden
-url: "{{baseUrl}}/api/v1/dropperssubmissions/{{submissionId}}"
+url: "{{baseUrl}}/api/v1/droppers-submissions/{{submissionId}}"
 method: DELETE
 auth:
   type: bearer
