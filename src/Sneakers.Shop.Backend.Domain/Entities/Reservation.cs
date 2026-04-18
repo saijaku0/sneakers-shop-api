@@ -8,6 +8,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
     {
         public Guid WarehouseItemId { get; private set; }
         public Guid UserId { get; private set; }
+        public int Quantity { get; private set; }
         public ReservationStatus Status { get; private set; }
         public DateTimeOffset CreatedAt { get; private set; }
         public DateTimeOffset ExpiresAt { get; private set; }
@@ -16,13 +17,18 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public Reservation(
             Guid warehouseItemId, 
             Guid userId, 
-            DateTimeOffset expiresAt) : base(Guid.NewGuid())
+            DateTimeOffset expiresAt, 
+            int quantity) : base(Guid.NewGuid())
         {
+            if (quantity <= 0)
+                throw new DomainException("Quantity must be positive.", nameof(quantity));
+
             WarehouseItemId = warehouseItemId;
             UserId = userId;
             Status = ReservationStatus.Pending;
             CreatedAt = DateTimeOffset.UtcNow;
             ExpiresAt = expiresAt;
+            Quantity = quantity;
         }
 
         public void Confirm()
@@ -65,6 +71,22 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             if (!CanBeModified())
                 throw new DomainException("Only pending and non-expired reservations can have their expiration time updated.");
             ExpiresAt = newExpiresAt;
+        }
+
+        public void UpdateQuantity(int newQuantity)
+        {
+            if (!CanBeModified())
+                throw new DomainException("Only pending and non-expired reservations can have their quantity updated.");
+            if (newQuantity <= 0)
+                throw new DomainException("Quantity must be greater than zero.");
+            Quantity = newQuantity;
+        }
+
+        public void UpdateWarehouseItemId(Guid newWarehouseItemId)
+        {
+            if (!CanBeModified())
+                throw new DomainException("Only pending and non-expired reservations can have their warehouse item updated.");
+            WarehouseItemId = newWarehouseItemId;
         }
 
         public void Expire()
