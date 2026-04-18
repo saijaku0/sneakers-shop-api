@@ -8,7 +8,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public Guid ProductId { get; private set; }
         public Guid SizeId { get; private set; }
         public int Quantity { get; private set; }
-        public int Reserved { get; private set; }
+        public Product Product { get; private set; } = null!;
         public byte[]? RowVersion { get; private set; }
 
         private WarehouseItem() { }
@@ -28,50 +28,21 @@ namespace Sneakers.Shop.Backend.Domain.Entities
             ProductId = productId;
             SizeId = productSizeId;
             Quantity = initialQuantity;
-            Reserved = 0;
         }
 
-        public int AvailableQuantity => Quantity - Reserved;
-
-        static private bool IsAmountZeroOrNegative(int amount) => amount <= 0;
-        static private bool IsAmountGreaterThanZero(int amount) => amount > 0;
-        private bool IsAmountGreaterThanReserved(int amount) => amount > Reserved;
-        private bool IsAmountLessOrEqualAvailableQuantity(int amount) => amount <= AvailableQuantity;
-
-        public void Reserve(int amount)
+        public void DecreaseQuantity(int amount)
         {
-            if(!IsAmountGreaterThanZero(amount))
-                throw new DomainException($"Cannot reserve {amount} items.");
-            if (!IsAmountLessOrEqualAvailableQuantity(amount))
-                throw new DomainException($"Cannot set amount bigger than reserved. Available: {AvailableQuantity}");
-
-            Reserved += amount; 
-        }
-
-        public void Unreserve (int amount)
-        {
-            if (IsAmountZeroOrNegative(amount))
+            if (amount <= 0)
                 throw new DomainException("Amount must be positive", nameof(amount));
-            if (IsAmountGreaterThanReserved(amount))
-                throw new DomainException($"Cannot unreserve {amount} items. Reserved: {Reserved}");
+            if (amount > Quantity)
+                throw new DomainException($"Cannot decrease below zero. Available: {Quantity}");
 
-            Reserved -= amount;
-        }
-
-        public void FulfillReserved(int amount)
-        {
-            if (IsAmountZeroOrNegative(amount)) 
-                throw new DomainException("Amount must be positive", nameof(amount));
-            if (IsAmountGreaterThanReserved(amount)) 
-                throw new DomainException($"Cannot fulfill {amount} items. Reserved: {Reserved}");
-
-            Reserved -= amount;
             Quantity -= amount;
         }
 
         public void IncreaseQuantity(int amount)
         {
-            if (IsAmountZeroOrNegative(amount))
+            if (amount <= 0)
                 throw new DomainException("Amount must be positive", nameof(amount));
 
             Quantity += amount;
@@ -79,15 +50,13 @@ namespace Sneakers.Shop.Backend.Domain.Entities
 
         public void AdjustQuantity(int newQuantity)
         {
-            if (newQuantity < 0) 
+            if (newQuantity < 0)
                 throw new DomainException("Quantity cannot be negative", nameof(newQuantity));
-            if (newQuantity < Reserved) 
-                throw new DomainException($"Cannot set quantity less than reserved ({Reserved})");
 
             Quantity = newQuantity;
         }
 
-        internal void UpdateRowVersion(byte[] rowVersion) 
+        internal void UpdateRowVersion(byte[] rowVersion)
         {
             RowVersion = rowVersion;
         }

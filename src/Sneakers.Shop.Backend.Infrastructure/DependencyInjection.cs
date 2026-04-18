@@ -42,6 +42,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<IProductSubmissionRepository, ProductSubmissionRepository>();
             service.AddScoped<IBrandRepository, BrandRepository>();
             service.AddScoped<ISizeRepository, SizeRepository>();
+            service.AddScoped<IReservationRepository, ReservationRepository>();
 
             service.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             service.AddScoped<IJwtService, JwtService>();

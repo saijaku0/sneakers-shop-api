@@ -30,6 +30,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Persistence
         public DbSet<SalesSnapshot> SalesSnapshots { get; set; }
         public DbSet<ProductSubmission> ProductSubmissions { get; set; }
         public DbSet<DropperPayout> DropperPayouts { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
