@@ -9,7 +9,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public Guid WarehouseItemId { get; private set; }
         public Guid UserId { get; private set; }
         public ReservationStatus Status { get; private set; }
-        public DateTimeOffset? CreatedAt { get; private set; }
+        public DateTimeOffset CreatedAt { get; private set; }
         public DateTimeOffset ExpiresAt { get; private set; }
         private Reservation() { }
 
