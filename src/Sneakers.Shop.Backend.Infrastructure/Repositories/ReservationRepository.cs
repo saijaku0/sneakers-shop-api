@@ -20,6 +20,15 @@ namespace Sneakers.Shop.Backend.Infrastructure.Repositories
             return await _dbContext.Reservations.FirstOrDefaultAsync(r => r.Id == id, ct);
         }
 
+        public async Task<IReadOnlyList<Reservation>> GetActiveByUserIdAsync(Guid userId, CancellationToken ct)
+        {
+            return await _dbContext.Reservations
+                .Where(r => r.UserId == userId && r.Status == ReservationStatus.Pending)
+                .Include(r => r.WarehouseItem)
+                    .ThenInclude(wi => wi.Product)
+                .ToListAsync(ct);
+        }
+
         public async Task<int> GetReservedCountAsync(Guid warehouseItemId, CancellationToken ct)
         {
             return await _dbContext.Reservations

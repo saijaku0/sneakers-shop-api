@@ -8,6 +8,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
         public Guid ProductId { get; private set; }
         public Guid SizeId { get; private set; }
         public int Quantity { get; private set; }
+        public Product Product { get; private set; } = null!;
         public byte[]? RowVersion { get; private set; }
 
         private WarehouseItem() { }
