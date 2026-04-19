@@ -12,6 +12,7 @@ using Sneakers.Shop.Backend.Domain.Repositories;
 using Sneakers.Shop.Backend.Domain.Services;
 using Sneakers.Shop.Backend.Infrastructure.Auth;
 using Sneakers.Shop.Backend.Infrastructure.Auth.Handlers;
+using Sneakers.Shop.Backend.Infrastructure.BackgroundJobs;
 using Sneakers.Shop.Backend.Infrastructure.Events;
 using Sneakers.Shop.Backend.Infrastructure.Identity;
 using Sneakers.Shop.Backend.Infrastructure.Persistence;
@@ -53,6 +54,7 @@ namespace Sneakers.Shop.Backend.Infrastructure
             service.AddScoped<ISizeConversionService, SizeConversionService>();
 
             service.AddScoped<RoleSeeder>();
+            service.AddHostedService<ExpireReservationsJob>();
             service.AddScoped<IAuthorizationHandler, ActiveDropperHandler>();
             service.AddScoped<IAuthorizationHandler, ActiveModeratorHandler>();
             service.AddScoped<IStorageService, StorageService>();
@@ -65,6 +67,12 @@ namespace Sneakers.Shop.Backend.Infrastructure
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
+            service.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+                options.InstanceName = "sneakers-shop:";
+            });
 
             service.AddAuthentication(options =>
             {
