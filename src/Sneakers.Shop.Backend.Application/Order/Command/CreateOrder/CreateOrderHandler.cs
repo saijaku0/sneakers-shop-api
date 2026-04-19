@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Sneakers.Shop.Backend.Domain.Common;
 using Sneakers.Shop.Backend.Domain.Repositories;
-using Sneakers.Shop.Backend.Domain.Entities;
 
 namespace Sneakers.Shop.Backend.Application.Orders.Command.CreateOrder
 {
@@ -21,7 +20,7 @@ namespace Sneakers.Shop.Backend.Application.Orders.Command.CreateOrder
             if (!reservations.Any())
                 return Result<Guid>.Failure(Error.Conflict("Cart is empty."));
 
-            var order = new Order(request.UserId, request.ShippingAddress);
+            var order = new Domain.Entities.Order(request.UserId, request.ShippingAddress);
 
             foreach (var reservation in reservations)
             {
