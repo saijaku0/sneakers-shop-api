@@ -14,6 +14,11 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
             builder.Property(w => w.Quantity)
                 .IsRequired();
 
+            builder.HasOne(x => x.Product)
+                .WithMany(p => p.WarehouseItems)
+                .HasForeignKey(x => x.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne<Size>()
                 .WithMany()
                 .HasForeignKey(s => s.SizeId)

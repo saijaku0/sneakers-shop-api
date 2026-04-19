@@ -33,6 +33,12 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
 
+  redis:
+    image: redis:7
+    container_name: sneakers_shop_redis
+    ports:
+      - "6379:6379"
+
 volumes:
   data_sql:
       

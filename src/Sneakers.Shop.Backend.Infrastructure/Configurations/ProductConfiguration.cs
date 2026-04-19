@@ -34,7 +34,7 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(w => w.WarehouseItems)
-                .WithOne()
+                .WithOne(w => w.Product)
                 .HasForeignKey(w => w.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Navigation(p => p.WarehouseItems)
