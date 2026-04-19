@@ -7,6 +7,7 @@ namespace Sneakers.Shop.Backend.Domain.Entities
     {
         public Guid OrderId { get; private set; }
         public Guid WarehouseItemId { get; private set; }
+        public WarehouseItem WarehouseItem { get; private set; } = null!;
         public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
         public decimal DiscountAmount { get; private set; }

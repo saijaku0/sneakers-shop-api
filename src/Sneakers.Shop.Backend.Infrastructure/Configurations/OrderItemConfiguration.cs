@@ -19,6 +19,10 @@ namespace Sneakers.Shop.Backend.Infrastructure.Configurations
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
 
+            builder.HasOne(x => x.WarehouseItem)
+                .WithMany()
+                .HasForeignKey(x => x.WarehouseItemId);
+
             builder.HasOne<WarehouseItem>()
                 .WithMany()
                 .HasForeignKey(o => o.WarehouseItemId)
