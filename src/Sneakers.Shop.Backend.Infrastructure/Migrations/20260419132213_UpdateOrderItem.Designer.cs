@@ -12,7 +12,7 @@ using Sneakers.Shop.Backend.Infrastructure.Persistence;
 namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260419130854_UpdateOrderItem")]
+    [Migration("20260419132213_UpdateOrderItem")]
     partial class UpdateOrderItem
     {
         /// <inheritdoc />
@@ -346,16 +346,11 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.Property<Guid>("WarehouseItemId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("WarehouseItemId1")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
                     b.HasIndex("WarehouseItemId");
-
-                    b.HasIndex("WarehouseItemId1");
 
                     b.ToTable("OrderItems", (string)null);
                 });
@@ -719,9 +714,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ProductId1")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -732,8 +724,6 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId1");
 
                     b.HasIndex("SizeId");
 
@@ -1008,16 +998,10 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.WarehouseItem", null)
+                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.WarehouseItem", "WarehouseItem")
                         .WithMany()
                         .HasForeignKey("WarehouseItemId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.WarehouseItem", "WarehouseItem")
-                        .WithMany()
-                        .HasForeignKey("WarehouseItemId1")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("WarehouseItem");
@@ -1182,16 +1166,10 @@ namespace Sneakers.Shop.Backend.Infrastructure.Migrations
 
             modelBuilder.Entity("Sneakers.Shop.Backend.Domain.Entities.WarehouseItem", b =>
                 {
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Product", null)
+                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Product", "Product")
                         .WithMany("WarehouseItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Sneakers.Shop.Backend.Domain.Entities.Size", null)
